@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#090B0F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ledger">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Ledger — Life &amp; Performance OS</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   Ledger: an academic + athletic performance system.
+   Base: cool charcoal (field-notebook-at-night), not pure black.
+   Accents map to domains — track orange (physical), ink blue
+   (academic), signal green (language) — so color itself carries
+   meaning across the app rather than decorating it.
+   Type: Fraunces (serif, personality, used for numbers & headers)
+         + IBM Plex Sans (technical, for body/data/labels).
+   ============================================================ */
+@font-face {
+  font-family: 'Fraunces';
+  src: local('Fraunces');
+}
+:root {
+  /* LEDGER / OBSIDIAN DESIGN SYSTEM */
+  --bg: #090B0F;
+  --bg-raised: #11151B;
+  --bg-inset: #0D1015;
+  --line: #292F38;
+  --line-soft: #1D232C;
+  --text: #F5F7FA;
+  --text-dim: #A5AFBA;
+  --text-faint: #697481;
+
+  --track: #E10600;
+  --track-dim: #64201F;
+  --ink: #DCE3EA;
+  --ink-dim: #424B56;
+  --signal: #AEB8C3;
+  --signal-dim: #3A424C;
+  --amber: #C2CBD4;
+  --amber-dim: #414A54;
+  --violet: #929EAB;
+  --violet-dim: #39424D;
+
+  --danger: #FF514B;
+  --good: #DCE3EA;
+
+  --radius-s: 7px;
+  --radius-m: 12px;
+
+  --serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--text);
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  padding: 8px 10px;
+}
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- layout shell ---------- */
+#app {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  min-height: 100vh;
+}
+@media (max-width: 860px) {
+  #app { grid-template-columns: 1fr; }
+  #sidebar { display: none; }
+  #sidebar.open { display: flex; position: fixed; inset: 0; z-index: 50; width: 100%; }
+}
+
+#sidebar {
+  background: var(--bg-raised);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.brand {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  padding: 0 20px 18px;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.brand .close-btn { display: none; background: none; border: none; color: var(--text-dim); font-size: 20px; }
+@media (max-width: 860px) { .brand .close-btn { display: block; } }
+
+.nav-group { margin-top: 14px; }
+.nav-label {
+  padding: 0 20px 6px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: var(--text-dim);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  font-size: 14px;
+  background: none;
+  border-top: none; border-right: none; border-bottom: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-item:hover { color: var(--text); background: var(--bg-inset); }
+.nav-item.active {
+  color: var(--text);
+  border-left-color: var(--ink);
+  background: var(--bg-inset);
+}
+.nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.sidebar-foot {
+  margin-top: auto;
+  padding: 14px 20px 0;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+#main {
+  padding: 26px 32px 80px;
+  max-width: 1120px;
+  width: 100%;
+}
+@media (max-width: 860px) {
+  #main { padding: 18px 16px 90px; }
+}
+
+.topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+@media (max-width: 860px) {
+  .topbar { display: flex; }
+}
+.hamburger {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: var(--radius-s);
+  padding: 8px 12px;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.page-title {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+.page-sub { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+
+/* ---------- primitives ---------- */
+.section {
+  margin-bottom: 30px;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.section-title .n { color: var(--text-faint); font-weight: 400; }
+
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 16px;
+}
+.grid {
+  display: grid;
+  gap: 14px;
+}
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 760px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.stat {
+  border-left: 2px solid var(--line);
+  padding: 2px 0 2px 12px;
+}
+.stat.track { border-color: var(--track); }
+.stat.ink { border-color: var(--ink); }
+.stat.signal { border-color: var(--signal); }
+.stat.amber { border-color: var(--amber); }
+.stat.violet { border-color: var(--violet); }
+.stat-num { font-family: var(--serif); font-size: 26px; line-height: 1.1; }
+.stat-label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+}
+.pill.track { border-color: var(--track-dim); color: var(--track); }
+.pill.ink { border-color: var(--ink-dim); color: var(--ink); }
+.pill.signal { border-color: var(--signal-dim); color: var(--signal); }
+.pill.amber { border-color: var(--amber-dim); color: var(--amber); }
+.pill.violet { border-color: var(--violet-dim); color: var(--violet); }
+.pill.danger { border-color: #6b2b2b; color: var(--danger); }
+
+.btn {
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius-s);
+  font-size: 13px;
+}
+.btn:hover { border-color: var(--text-faint); }
+.btn.primary { background: var(--ink); border-color: var(--ink); color: #0b0e1a; font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.danger { border-color: var(--danger); color: var(--danger); background: transparent; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
+.btn.small { padding: 5px 10px; font-size: 12px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.row { display: flex; gap: 10px; align-items: center; }
+.row.wrap { flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.field label { font-size: 12px; color: var(--text-dim); }
+.field input, .field select, .field textarea { width: 100%; }
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+  gap: 10px;
+}
+.list-item:last-child { border-bottom: none; }
+
+.empty {
+  color: var(--text-faint);
+  font-size: 13px;
+  padding: 18px 0;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-m);
+}
+
+.bar-track {
+  height: 6px;
+  background: var(--bg-inset);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: 4px; }
+
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(10,11,13,0.72);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 22px;
+  width: 100%;
+  max-width: 460px;
+  max-height: 86vh;
+  overflow-y: auto;
+}
+.modal h3 { font-family: var(--serif); margin: 0 0 14px; font-size: 19px; }
+
+.toast-wrap {
+  position: fixed; bottom: 20px; right: 20px; z-index: 200;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--good);
+  padding: 10px 14px;
+  border-radius: var(--radius-s);
+  font-size: 13px;
+  max-width: 300px;
+}
+.toast.err { border-left-color: var(--danger); }
+
+hr.hair { border: none; border-top: 1px solid var(--line-soft); margin: 14px 0; }
+
+.mono { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+.muted { color: var(--text-dim); }
+.faint { color: var(--text-faint); }
+textarea { resize: vertical; min-height: 70px; }
+
+/* ---- PHONE APP LAYER ---- */
+#tabbar{display:none}
+@media (max-width:860px){
+  body{padding-top:env(safe-area-inset-top);-webkit-tap-highlight-color:transparent}
+  #pages{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  #tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:rgba(27,30,35,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  #tabbar button{background:none;border:0;color:var(--text-faint);font-family:inherit;font-size:10.5px;font-weight:600;line-height:1;letter-spacing:.3px;
+    padding:6px 0 4px;min-height:50px;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;transition:color .15s}
+  #tabbar svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  #tabbar button.active{color:var(--text)}
+  #tabbar button.active::before{content:"";position:absolute;top:-7px;width:26px;height:3px;border-radius:0 0 3px 3px;background:var(--track)}
+  .btn{min-height:42px;white-space:nowrap}
+  input,select,textarea{font-size:16px!important}
+  .card{border-radius:10px}
+  .topbar .hamburger{display:none}
+  #sidebar{display:none}
+  #sidebar.open{display:flex;position:fixed;inset:0;z-index:60;width:100%;padding-top:calc(20px + env(safe-area-inset-top))}
+}
+.rem-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.rem-row:last-child{border-bottom:0}
+.rem-row input[type=time]{width:auto;min-width:96px}
+.rem-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--track)}
+
+.tick{width:30px;height:30px;min-width:30px;border-radius:50%;border:2px solid var(--line);background:transparent;color:#0f1114;font-size:16px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;margin-right:12px;cursor:pointer}
+.tick.on{background:var(--signal);border-color:var(--signal)}
+.todo-main{display:flex;align-items:center;flex:1;min-width:0}
+.is-done .todo-text{text-decoration:line-through;color:var(--text-faint)}
+.plan-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+.plan-row strong,.plan-row .note{grid-column:1/-1}
+
+/* ============================================================
+   LEDGER 2.0 — OBSIDIAN / ICE / RACING RED
+   Progressive visual layer: keeps the existing UI and data model.
+   ============================================================ */
+:root { color-scheme: dark; }
+body {
+  background:
+    radial-gradient(ellipse at 82% -18%, rgba(225,6,0,.075), transparent 38%),
+    var(--bg);
+  letter-spacing: -.012em;
+}
+#sidebar {
+  background: rgba(13,16,21,.96);
+  border-right-color: var(--line-soft);
+  padding-top: 24px;
+}
+.brand {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.brand::after {
+  content: "YOUR LIFE. YOUR SYSTEM.";
+  display: block;
+  position: absolute;
+  top: 55px;
+  left: 20px;
+  color: var(--text-faint);
+  font: 600 8px/1 var(--sans);
+  letter-spacing: .16em;
+}
+.brand { position: relative; padding-bottom: 28px; }
+.nav-group { margin-top: 18px; }
+.nav-label { text-transform: uppercase; letter-spacing: .14em; font-weight: 700; }
+.nav-item {
+  margin: 2px 10px;
+  width: calc(100% - 20px);
+  border-left: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.nav-item:hover { transform: translateX(2px); background: #171D25; }
+.nav-item.active {
+  color: var(--text);
+  background: linear-gradient(90deg, rgba(225,6,0,.16), rgba(225,6,0,.035));
+  box-shadow: inset 2px 0 0 var(--track);
+}
+.nav-item.active .nav-dot { background: var(--track) !important; box-shadow: 0 0 10px rgba(225,6,0,.55); }
+#main { max-width: 1280px; padding-top: 30px; }
+.page-title { font-family: var(--sans); font-weight: 750; letter-spacing: -.045em; }
+.page-sub { color: var(--text-dim); }
+.page.active { animation: ledger-page-in .28s cubic-bezier(.2,.75,.25,1) both; }
+@keyframes ledger-page-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card {
+  background: linear-gradient(145deg, rgba(20,25,33,.98), rgba(15,19,25,.98));
+  border-color: var(--line-soft);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.12);
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.card:hover { border-color: #3A424D; box-shadow: 0 12px 34px rgba(0,0,0,.2); }
+.section-head { border-bottom-color: var(--line-soft); }
+.section-title { text-transform: uppercase; letter-spacing: .09em; font-size: 11px; font-weight: 750; }
+.btn {
+  border-radius: 8px;
+  min-height: 36px;
+  transition: transform .15s ease, filter .15s ease, background .15s ease, border-color .15s ease;
+}
+.btn:active { transform: scale(.97); }
+.btn.primary {
+  background: var(--track);
+  border-color: var(--track);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(225,6,0,.18);
+}
+.btn.primary:hover { filter: brightness(1.12); }
+input, select, textarea {
+  background: #0B0F14;
+  border-color: #303844;
+  border-radius: 8px;
+}
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline-color: rgba(225,6,0,.8);
+}
+.pill { border-radius: 6px; }
+.stat-num { font-family: var(--mono); font-weight: 700; letter-spacing: -.05em; }
+.bar-track { background: #080B0F; height: 7px; border-radius: 99px; }
+.bar-fill { border-radius: 99px; }
+.modal-overlay { background: rgba(3,5,8,.82); backdrop-filter: blur(8px); }
+.modal {
+  background: #11161D;
+  border-color: #343D48;
+  border-radius: 14px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  animation: ledger-modal-in .2s ease both;
+}
+@keyframes ledger-modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.toast { border-radius: 9px; border-left-color: var(--track); }
+#tabbar { background: rgba(9,11,15,.92) !important; border-top-color: var(--line-soft) !important; }
+#tabbar button.active { color: var(--text) !important; }
+#tabbar button.active::before { background: var(--track) !important; box-shadow: 0 0 12px rgba(225,6,0,.45); }
+#tabbar button { transition: color .18s ease, transform .18s ease; }
+#tabbar button:active { transform: scale(.94); }
+.sidebar-foot { letter-spacing: .04em; }
+@media (max-width: 860px) {
+  #main { padding: 16px 14px calc(96px + env(safe-area-inset-bottom)); }
+  .page-title { font-size: 25px; }
+  .card { border-radius: 11px; }
+  .modal { max-height: calc(88vh - env(safe-area-inset-top)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page.active, .modal { animation: none !important; }
+  .card, .btn, .nav-item, #tabbar button { transition: none !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <nav id="sidebar">
+    <div class="brand">Ledger <button class="close-btn" onclick="closeSidebar()">✕</button></div>
+    <div class="nav-group" id="nav-list"></div>
+    <div class="sidebar-foot" id="sidebar-foot"></div>
+  </nav>
+  <main id="main">
+    <div class="topbar">
+      <button class="hamburger" onclick="openSidebar()">☰ Menu</button>
+      <strong id="topbar-title" style="font-family:var(--serif);font-size:18px;"></strong>
+    </div>
+    <div id="pages"></div>
+  </main>
+</div>
+<nav id="tabbar"><button data-tab-go="today"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg>Today</button><button data-tab-go="week"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Week</button><button data-tab-go="training"><svg viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></svg>Training</button><button data-tab-go="academic"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/></svg>Study</button><button data-tab-more><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>More</button></nav>
+<div class="modal-overlay" id="modal-overlay"><div class="modal" id="modal-body"></div></div>
+<div class="toast-wrap" id="toast-wrap"></div>
+<script>
+/* ============================================================
+   LEDGER 2.0 — core: constants, db layer, utilities
+   ============================================================ */
+const DB_NAME = 'ledger_os';
+const DB_VERSION = 1;
+let db = null;
+
+const STORES = [
+  { name: 'habits', keyPath: 'id' },
+  { name: 'habitLogs', keyPath: 'id' },
+  { name: 'runs', keyPath: 'id' },
+  { name: 'strengthSessions', keyPath: 'id' },
+  { name: 'courses', keyPath: 'id' },
+  { name: 'assignments', keyPath: 'id' },
+  { name: 'studySessions', keyPath: 'id' },
+  { name: 'languageLogs', keyPath: 'id' },
+  { name: 'projects', keyPath: 'id' },
+  { name: 'skills', keyPath: 'id' },
+  { name: 'goals', keyPath: 'id' },
+  { name: 'dailyReflections', keyPath: 'id' },
+  { name: 'weeklyReviews', keyPath: 'id' },
+  { name: 'recoveryLogs', keyPath: 'id' },
+  { name: 'meta', keyPath: 'key' }
+];
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const _db = e.target.result;
+      STORES.forEach(s => {
+        if (!_db.objectStoreNames.contains(s.name)) {
+          _db.createObjectStore(s.name, { keyPath: s.keyPath });
+        }
+      });
+    };
+    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+function tx(storeName, mode = 'readonly') {
+  return db.transaction(storeName, mode).objectStore(storeName);
+}
+function dbGetAll(storeName) {
+  return new Promise((resolve, reject) => {
+    const req = tx(storeName).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbGet(storeName, key) {
+  return new Promise((resolve, reject) => {
+    const req = tx(storeName).get(key);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbPut(storeName, value) {
+  return new Promise((resolve, reject) => {
+    const req = tx(storeName, 'readwrite').put(value);
+    req.onsuccess = () => resolve(value);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbDelete(storeName, key) {
+  return new Promise((resolve, reject) => {
+    const req = tx(storeName, 'readwrite').delete(key);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbClear(storeName) {
+  return new Promise((resolve, reject) => {
+    const req = tx(storeName, 'readwrite').clear();
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+function todayISO(offsetDays = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function nowISO() { return new Date().toISOString(); }
+function dayName(iso) {
+  const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return names[new Date(iso + 'T12:00:00').getDay()];
+}
+function shortDate(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+function fmtDateTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' · ' +
+    d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+}
+function daysBetween(a, b) {
+  const A = new Date(a + 'T00:00:00'), B = new Date(b + 'T00:00:00');
+  return Math.round((B - A) / 86400000);
+}
+function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+function round1(n) { return Math.round(n * 10) / 10; }
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function toast(msg, isErr = false) {
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast' + (isErr ? ' err' : '');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+function openModal(html) {
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-body').innerHTML = '';
+}
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'modal-overlay') closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+function openSidebar() { document.getElementById('sidebar').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); }
+/* ============================================================
+   LEDGER — domain constants & seeding
+   ============================================================ */
+
+// suggested weekly load shape — used only to seed defaults / label days, never locks the user in
+const DAY_PLAN = {
+  Monday:    { training: 'gym', intensity: 'moderate', note: 'Strength session.' },
+  Tuesday:   { training: 'run', intensity: 'moderate', note: 'Run day.' },
+  Wednesday: { training: 'recovery', intensity: 'light', note: 'Active recovery.' },
+  Thursday:  { training: 'gym', intensity: 'moderate', note: 'Strength session.' },
+  Friday:    { training: 'run', intensity: 'moderate', note: 'Easy run.' },
+  Saturday:  { training: 'long_run', intensity: 'hard', note: 'Long run or a longer activity.' },
+  Sunday:    { training: 'rest', intensity: 'light', note: 'Rest and plan the week.' }
+};
+
+// performance weighting — default, editable in Settings
+const DEFAULT_WEIGHTS = {
+  academic: 30,
+  physical: 25,
+  languages: 15,
+  professional: 15,
+  recovery: 10,
+  discipline: 5
+};
+
+const SKILL_TREE = {
+  Academic: ['Research', 'Critical Thinking', 'Academic Writing', 'Argumentation', 'Analysis', 'Presentation'],
+  Languages: ['Speaking', 'Listening', 'Reading', 'Writing'],
+  Physical: ['Strength', 'Endurance', 'Mobility', 'Conditioning'],
+  Professional: ['Project Management', 'Communication', 'Practical Experience', 'Portfolio']
+};
+
+const STRENGTH_SPLIT = {
+  // simple upper/lower/full rotation appropriate for "some experience, no structure", 3x/week
+  A: {
+    label: 'Push-dominant Upper',
+    exercises: ['Barbell/DB Bench Press', 'Overhead Press', 'Incline DB Press', 'Triceps Pushdown or Dips', 'Lateral Raise']
+  },
+  B: {
+    label: 'Lower Body',
+    exercises: ['Back Squat', 'Romanian Deadlift', 'Walking Lunge', 'Leg Curl or Nordic', 'Calf Raise']
+  },
+  C: {
+    label: 'Pull-dominant Upper + Core',
+    exercises: ['Weighted Pull-up or Lat Pulldown', 'Barbell/DB Row', 'Face Pull', 'Biceps Curl', 'Hanging Leg Raise']
+  }
+};
+
+async function seedIfEmpty() {
+  if (await dbGet('meta', 'weights')) return;
+
+  // Fresh installs start with an empty activity list.
+  // Users create the routines and activities that fit their own lives.
+  // Existing installations keep all previously stored habits untouched.
+
+  // skill tree entries
+  for (const group of Object.keys(SKILL_TREE)) {
+    for (const skillName of SKILL_TREE[group]) {
+      await dbPut('skills', {
+        id: uid(), group, name: skillName, level: 1, evidenceCount: 0,
+        lastPracticed: null, milestones: []
+      });
+    }
+  }
+
+  // weights
+  await dbPut('meta', { key: 'weights', value: DEFAULT_WEIGHTS });
+}
+
+async function getWeights() {
+  const rec = await dbGet('meta', 'weights');
+  return rec ? rec.value : DEFAULT_WEIGHTS;
+}
+/* ============================================================
+   LEDGER — navigation & router
+   ============================================================ */
+const PAGES = [
+  { id: 'today', label: 'Today', dot: 'ink' },
+  { id: 'week', label: 'This Week', dot: 'ink' },
+  { id: 'training', label: 'Training', dot: 'track' },
+  { id: 'academic', label: 'Academic', dot: 'ink' },
+  { id: 'languages', label: 'Languages', dot: 'signal' },
+  { id: 'projects', label: 'Projects', dot: 'amber' },
+  { id: 'skills', label: 'Skill Tree', dot: 'violet' },
+  { id: 'charts', label: 'Heatmap & Charts', dot: 'ink' },
+  { id: 'reflection', label: 'Reflection', dot: 'violet' },
+  { id: 'settings', label: 'Settings', dot: 'faint' }
+];
+
+let currentPage = 'today';
+
+function renderNav() {
+  const nav = document.getElementById('nav-list');
+  nav.innerHTML = PAGES.map(p => `
+    <button class="nav-item ${p.id === currentPage ? 'active' : ''}" data-page="${p.id}">
+      <span class="nav-dot" style="background:var(--${p.dot === 'faint' ? 'text-faint' : p.dot})"></span>
+      ${p.label}
+    </button>
+  `).join('');
+  nav.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => goTo(btn.dataset.page));
+  });
+}
+
+async function goTo(pageId) {
+  currentPage = pageId;
+  location.hash = pageId;
+  renderNav();
+  closeSidebar();
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('page-' + pageId);
+  if (el) el.classList.add('active');
+  const label = PAGES.find(p => p.id === pageId);
+  document.getElementById('topbar-title').textContent = label ? label.label : '';
+  const renderer = PAGE_RENDERERS[pageId];
+  if (renderer) await renderer();
+}
+
+function initRouter() {
+  const hash = location.hash.replace('#', '');
+  const start = PAGES.find(p => p.id === hash) ? hash : 'today';
+  goTo(start);
+}
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.replace('#', '');
+  if (PAGES.find(p => p.id === hash)) goTo(hash);
+});
+/* ============================================================
+   LEDGER — Today page
+   ============================================================ */
+async function getMeta(k, def) { const r = await dbGet('meta', k); return r && r.value !== undefined ? r.value : def; }
+async function setMeta(k, v) { await dbPut('meta', { key: k, value: v }); }
+
+async function renderToday() {
+  const container = document.getElementById('page-today');
+  const iso = todayISO(); window.__day = iso;
+  const dName = dayName(iso);
+  const plan = DAY_PLAN[dName];
+  const [courses, assignments, habits, habitLogs, runs, strength, recovery, reflections, events, tasks, doneKeys, user] = await Promise.all([
+    dbGetAll('courses'), dbGetAll('assignments'), dbGetAll('habits'), dbGetAll('habitLogs'),
+    dbGetAll('runs'), dbGetAll('strengthSessions'), dbGetAll('recoveryLogs'), dbGetAll('dailyReflections'),
+    getMeta('events', []), getMeta('tasks', []), getMeta('done-' + iso, []), getMeta('user', '')
+  ]);
+  const todayLogs = habitLogs.filter(l => l.date === iso);
+  const dailyHabits = habits.filter(h => h.frequency === 'daily' && !h.archived);
+  const weeklyHabits = habits.filter(h => h.frequency === 'weekly' && !h.archived);
+  const open = assignments.filter(a => a.status !== 'done' && a.dueDate).sort((a, b) => a.dueDate.localeCompare(b.dueDate)).slice(0, 8);
+  const overdue = open.filter(a => a.dueDate < iso);
+  const dueSoon = open.filter(a => a.dueDate >= iso && daysBetween(iso, a.dueDate) <= 3);
+  const dueLater = open.filter(a => a.dueDate >= iso && daysBetween(iso, a.dueDate) > 3);
+  const trainedToday = runs.some(r => r.date === iso) || strength.some(s => s.date === iso);
+  const recoveryToday = recovery.find(r => r.date === iso);
+  const reflectionToday = reflections.find(r => r.date === iso);
+  const dn = k => doneKeys.includes(k);
+
+  const must = [];
+  courses.filter(c => c.day === dName && c.status !== 'dropped').forEach(c =>
+    must.push({ key: 'c:' + c.id, text: `Class: ${escapeHtml(c.code || '')} ${escapeHtml(c.name)} ${c.time ? '(' + escapeHtml(c.time) + ')' : ''}`, tag: 'ink', done: dn('c:' + c.id) }));
+  events.filter(e => e.day === dName).sort((a, b) => (a.time || '').localeCompare(b.time || '')).forEach(e =>
+    must.push({ key: 'e:' + e.id, text: `${e.time ? escapeHtml(e.time) + ' · ' : ''}${escapeHtml(e.title)}`, tag: 'ink', done: dn('e:' + e.id) }));
+  overdue.forEach(a => must.push({ key: 'a:' + a.id, kind: 'assign', id: a.id, text: `Overdue: ${escapeHtml(a.title)} (${escapeHtml(a.course || '')})`, tag: 'danger' }));
+  open.filter(a => a.dueDate === iso).forEach(a => must.push({ key: 'a:' + a.id, kind: 'assign', id: a.id, text: `Due today: ${escapeHtml(a.title)}`, tag: 'danger' }));
+  if (plan.training !== 'rest' && (plan.intensity === 'hard' || plan.training === 'gym' || plan.training === 'run')) {
+    must.push({ key: 'train', text: `Training: ${labelTraining(plan.training)} (${plan.intensity})`, tag: 'track', done: trainedToday || dn('train') });
+  }
+  const mine = tasks.filter(t => t.date === iso || (t.date < iso && !t.done)).map(t => ({ key: 't:' + t.id, kind: 'task', id: t.id, text: escapeHtml(t.text), tag: 'violet', done: t.done }));
+  const should = [];
+  dueSoon.forEach(a => should.push({ key: 'a:' + a.id, kind: 'assign', id: a.id, text: `Due in ${daysBetween(iso, a.dueDate)}d: ${escapeHtml(a.title)}`, tag: 'ink' }));
+  dailyHabits.forEach(h => should.push({ key: 'h:' + h.id, kind: 'habit', id: h.id, text: `${escapeHtml(h.name)}${h.minViable ? ' — min: ' + escapeHtml(h.minViable) : ''}`, tag: 'amber', done: todayLogs.some(l => l.habitId === h.id) }));
+  const could = [];
+  dueLater.forEach(a => could.push({ key: 'a:' + a.id, kind: 'assign', id: a.id, text: `${escapeHtml(a.title)} — due ${shortDate(a.dueDate)}`, tag: 'faint' }));
+  weeklyHabits.forEach(h => could.push({ key: 'h:' + h.id, kind: 'habit', id: h.id, text: `${escapeHtml(h.name)} (weekly: ${escapeHtml(h.target || '')})`, tag: 'violet', done: todayLogs.some(l => l.habitId === h.id) }));
+  if (plan.training === 'recovery') could.push({ key: 'mob', text: 'Light mobility / stretching', tag: 'violet', done: dn('mob') });
+
+  const score = await computeDailyScore(iso);
+  const sec = (title, list, emptyMsg) => `<div class="section"><div class="section-head"><div class="section-title">${title} <span class="n">(${list.filter(i => !i.done).length} left)</span></div></div>${list.length ? `<div class="card">${list.map(renderTodoLine).join('')}</div>` : `<div class="empty">${emptyMsg}</div>`}</div>`;
+
+  container.innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">${dName}</h1>
+        <div class="page-sub">${user ? 'Hi ' + escapeHtml(user) + ' · ' : ''}${shortDate(iso)} · <span id="live-clock"></span> · ${escapeHtml(plan.note)}</div>
+      </div>
+      <div class="stat ink" style="text-align:right;"><div class="stat-num">${score}%</div><div class="stat-label">today's weighted score</div></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><div class="section-title">My tasks <span class="n">(${mine.filter(i => !i.done).length} left)</span></div></div>
+      <div class="card">
+        <div class="row" style="gap:8px;margin-bottom:${mine.length ? '10px' : '0'};"><input id="new-task" placeholder="Add a task for today…" style="flex:1;"><button class="btn primary small" id="add-task">Add</button></div>
+        ${mine.map(renderTodoLine).join('')}
+      </div>
+    </div>
+    ${sec('Must do', must, 'Nothing critical today.')}
+    ${sec('Should do', should, 'Should-do list is clear.')}
+    ${sec('Could do', could, 'Nothing optional queued.')}
+    <div class="section">
+      <div class="section-head"><div class="section-title">Tonight</div></div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="row between"><strong style="font-size:13px;">Training</strong><span class="pill ${trainedToday ? '' : 'track'}">${trainedToday ? 'logged' : 'not yet'}</span></div>
+          <p class="muted" style="font-size:12px;margin:8px 0 10px;">${labelTraining(plan.training)} planned today.</p>
+          <button class="btn small" onclick="goTo('training')">Log training →</button>
+        </div>
+        <div class="card">
+          <div class="row between"><strong style="font-size:13px;">Recovery</strong><span class="pill ${recoveryToday ? '' : 'violet'}">${recoveryToday ? 'logged' : 'not yet'}</span></div>
+          <p class="muted" style="font-size:12px;margin:8px 0 10px;">Sleep and readiness check-in.</p>
+          <button class="btn small" onclick="openRecoveryModal()">Log recovery →</button>
+        </div>
+        <div class="card">
+          <div class="row between"><strong style="font-size:13px;">Reflection</strong><span class="pill ${reflectionToday ? '' : 'amber'}">${reflectionToday ? 'logged' : 'not yet'}</span></div>
+          <p class="muted" style="font-size:12px;margin:8px 0 10px;">A few short prompts to close the day.</p>
+          <button class="btn small" onclick="goTo('reflection')">Reflect →</button>
+        </div>
+      </div>
+    </div>`;
+
+  const addTask = async () => {
+    const inp = document.getElementById('new-task'); const text = inp.value.trim(); if (!text) return;
+    const list = await getMeta('tasks', []); list.push({ id: uid(), text, date: iso, done: false });
+    await setMeta('tasks', list); renderToday();
+  };
+  document.getElementById('add-task').addEventListener('click', addTask);
+  document.getElementById('new-task').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+  container.onclick = async (e) => {
+    const t = e.target.closest('[data-todo]');
+    if (t) { await toggleTodo(t.dataset.todo, t.dataset.kind, t.dataset.id, iso); renderToday(); return; }
+    const d = e.target.closest('[data-del-task]');
+    if (d) { const list = (await getMeta('tasks', [])).filter(x => x.id !== d.dataset.delTask); await setMeta('tasks', list); renderToday(); }
+  };
+  const clk = document.getElementById('live-clock'); if (clk) clk.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+async function toggleTodo(key, kind, id, iso) {
+  if (kind === 'habit') {
+    const logs = (await dbGetAll('habitLogs')).filter(l => l.habitId === id && l.date === iso);
+    if (logs.length) { for (const l of logs) await dbDelete('habitLogs', l.id); }
+    else await dbPut('habitLogs', { id: uid(), habitId: id, date: iso, level: 'min', createdAt: nowISO() });
+  } else if (kind === 'task') {
+    const list = await getMeta('tasks', []); const t = list.find(x => x.id === id); if (t) t.done = !t.done; await setMeta('tasks', list);
+  } else if (kind === 'assign') {
+    const a = await dbGet('assignments', id); a.status = 'done'; await dbPut('assignments', a); toast('Marked done.');
+  } else {
+    const arr = await getMeta('done-' + iso, []); const i = arr.indexOf(key);
+    if (i >= 0) arr.splice(i, 1); else arr.push(key); await setMeta('done-' + iso, arr);
+  }
+}
+
+function renderTodoLine(item) {
+  const col = item.tag === 'faint' ? 'text-faint' : item.tag;
+  return `<div class="list-item todo ${item.done ? 'is-done' : ''}"><span class="todo-main"><button class="tick ${item.done ? 'on' : ''}" style="${item.done ? '' : 'border-color:var(--' + col + ');'}" data-todo="${item.key}" data-kind="${item.kind || ''}" data-id="${item.id || ''}" aria-label="Toggle done">${item.done ? '✓' : ''}</button><span class="todo-text">${item.text}</span></span>${item.kind === 'task' ? `<button class="btn ghost small" data-del-task="${item.id}">✕</button>` : ''}</div>`;
+}
+
+function labelTraining(t) {
+  return { gym: 'Gym / strength', run: 'Run', long_run: 'Long run', recovery: 'Recovery / mobility', rest: 'Rest', other: 'Other activity' }[t] || t;
+}
+
+async function quickLogHabit(habitId) {
+  await dbPut('habitLogs', { id: uid(), habitId, date: todayISO(), level: 'min', createdAt: nowISO() });
+  toast('Habit logged.');
+  renderToday();
+}
+
+async function computeDailyScore(iso) {
+  const weights = await getWeights();
+  const [habits, habitLogs, runs, strength, studySessions, languageLogs, projects, recoveryLogs] = await Promise.all([
+    dbGetAll('habits'), dbGetAll('habitLogs'), dbGetAll('runs'), dbGetAll('strengthSessions'),
+    dbGetAll('studySessions'), dbGetAll('languageLogs'), dbGetAll('projects'), dbGetAll('recoveryLogs')
+  ]);
+  const todayLogs = habitLogs.filter(l => l.date === iso);
+
+  // each domain: 0-100 based on achievement-weighted activity for the day, not just checkbox count
+  const academic = clamp(studySessions.filter(s => s.date === iso).reduce((sum, s) => sum + (s.type === 'output' ? 40 : s.type === 'practice' ? 22 : 10), 0), 0, 100);
+  const physical = clamp((runs.some(r => r.date === iso) ? 55 : 0) + (strength.some(s => s.date === iso) ? 55 : 0), 0, 100);
+  const languages = clamp(languageLogs.filter(l => l.date === iso).reduce((sum, l) => sum + (l.type === 'speaking' ? 35 : 20), 0), 0, 100);
+  const professional = clamp(projects.filter(p => p.lastWorkedDate === iso).length * 50, 0, 100);
+  const recovery = recoveryLogs.some(r => r.date === iso) ? 100 : 0;
+  const dailyHabits = habits.filter(h => h.frequency === 'daily' && !h.archived);
+  const discipline = dailyHabits.length ? clamp(Math.round((todayLogs.length / dailyHabits.length) * 100), 0, 100) : 0;
+
+  const total =
+    academic * weights.academic +
+    physical * weights.physical +
+    languages * weights.languages +
+    professional * weights.professional +
+    recovery * weights.recovery +
+    discipline * weights.discipline;
+  const maxPossible = Object.values(weights).reduce((a, b) => a + b, 0) * 100;
+  return Math.round((total / maxPossible) * 100);
+}
+/* ============================================================
+   LEDGER — This Week page
+   ============================================================ */
+async function renderWeek() {
+  const container = document.getElementById('page-week');
+  const dnames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const todayName = dayName(todayISO());
+
+  const [runs, strength, habits, habitLogs, assignments] = await Promise.all([
+    dbGetAll('runs'), dbGetAll('strengthSessions'), dbGetAll('habits'), dbGetAll('habitLogs'), dbGetAll('assignments')
+  ]);
+
+  // map this calendar week's dates (Mon-Sun)
+  const now = new Date();
+  const jsDay = now.getDay(); // 0 sun .. 6 sat
+  const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
+  const weekDates = {};
+  dnames.forEach((name, i) => {
+    weekDates[name] = todayISO(mondayOffset + i);
+  });
+
+  const weeklyRunDist = runs.filter(r => Object.values(weekDates).includes(r.date))
+    .reduce((s, r) => s + (Number(r.distanceKm) || 0), 0);
+  const weeklyStrengthCount = strength.filter(s => Object.values(weekDates).includes(s.date)).length;
+
+  const _courses = await dbGetAll('courses'), _events = await getMeta('events', []);
+  const dayCards = dnames.map(name => {
+    const cls = [..._courses.filter(c => c.day === name && c.status !== 'dropped').map(c => `${c.code || c.name} · ${c.time || ''}`), ..._events.filter(e => e.day === name).map(e => `${e.title} · ${e.time || ''}`)];
+    const plan = DAY_PLAN[name];
+    const date = weekDates[name];
+    const isToday = name === todayName;
+    const ranThatDay = runs.some(r => r.date === date);
+    const liftedThatDay = strength.some(s => s.date === date);
+    return `
+      <div class="card" style="${isToday ? 'border-color:var(--ink);' : ''}">
+        <div class="row between">
+          <strong style="font-size:13px;">${name}${isToday ? ' <span class="pill ink">today</span>' : ''}</strong>
+          <span class="faint mono">${shortDate(date)}</span>
+        </div>
+        <hr class="hair">
+        ${cls.length ? cls.map(x => `<div class="row" style="gap:8px;margin-bottom:4px;"><span class="pill ink">plan</span><span style="font-size:13px;">${escapeHtml(x)}</span></div>`).join('') : `<div class="faint" style="font-size:12px;">Nothing scheduled</div>`}
+        <div class="row" style="gap:8px;margin-top:8px;">
+          <span class="pill track">${labelTraining(plan.training)}</span>
+          <span class="faint" style="font-size:12px;">${plan.intensity}</span>
+        </div>
+        <div style="margin-top:8px;font-size:12px;" class="muted">
+          ${ranThatDay ? '✓ run logged' : ''} ${liftedThatDay ? '✓ strength logged' : ''}
+          ${(!ranThatDay && !liftedThatDay) ? '<span class="faint">not logged yet</span>' : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  const dueThisWeek = assignments
+    .filter(a => a.status !== 'done' && a.dueDate && Object.values(weekDates).includes(a.dueDate))
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+  const weeklyHabits = habits.filter(h => h.frequency === 'weekly' && !h.archived);
+  const weeklyHabitProgress = weeklyHabits.map(h => {
+    const count = habitLogs.filter(l => l.habitId === h.id && Object.values(weekDates).includes(l.date)).length;
+    return { h, count };
+  });
+
+  container.innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">This Week</h1>
+        <div class="page-sub">${shortDate(weekDates.Monday)} – ${shortDate(weekDates.Sunday)}</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="grid grid-3">
+        <div class="stat track"><div class="stat-num">${round1(weeklyRunDist)} km</div><div class="stat-label">running this week</div></div>
+        <div class="stat track"><div class="stat-num">${weeklyStrengthCount}</div><div class="stat-label">strength sessions</div></div>
+        <div class="stat ink"><div class="stat-num">${dueThisWeek.length}</div><div class="stat-label">deadlines this week</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Day by day</div></div>
+      <div class="grid grid-4">${dayCards}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Weekly habit targets</div></div>
+      <div class="card">
+        ${weeklyHabitProgress.length ? weeklyHabitProgress.map(({h, count}) => `
+          <div class="list-item">
+            <span>${escapeHtml(h.name)} <span class="faint mono">(${h.target})</span></span>
+            <span class="pill ${count > 0 ? 'signal' : 'faint'}">${count}x logged</span>
+          </div>
+        `).join('') : '<div class="empty">No weekly habits set.</div>'}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Deadlines this week</div></div>
+      ${dueThisWeek.length ? `<div class="card">${dueThisWeek.map(a => `
+        <div class="list-item"><span>${escapeHtml(a.title)} <span class="faint">— ${escapeHtml(a.course || '')}</span></span><span class="pill ink">${shortDate(a.dueDate)}</span></div>
+      `).join('')}</div>` : `<div class="empty">Nothing due this week.</div>`}
+    </div>
+  `;
+}
+/* ============================================================
+   LEDGER — Training page (Running / Strength / Recovery)
+   ============================================================ */
+let trainingTab = 'running';
+
+async function renderTraining() {
+  const container = document.getElementById('page-training');
+  container.innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Training</h1>
+        <div class="page-sub">3x gym / week · park running · training alone — logged against a simple program, not guesswork.</div>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:18px;border-bottom:1px solid var(--line);">
+      ${['running','strength','recovery','program'].map(t => `
+        <button class="btn ghost" data-tab="${t}" style="border-bottom:2px solid ${trainingTab === t ? 'var(--track)' : 'transparent'};border-radius:0;color:${trainingTab === t ? 'var(--text)' : 'var(--text-dim)'};">
+          ${t[0].toUpperCase() + t.slice(1)}
+        </button>`).join('')}
+    </div>
+    <div id="training-tab-body"></div>
+  `;
+  container.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => { trainingTab = btn.dataset.tab; renderTraining(); });
+  });
+  const body = document.getElementById('training-tab-body');
+  if (trainingTab === 'running') body.innerHTML = await runningTabHtml();
+  if (trainingTab === 'strength') body.innerHTML = await strengthTabHtml();
+  if (trainingTab === 'recovery') body.innerHTML = await recoveryTabHtml();
+  if (trainingTab === 'program') body.innerHTML = programTabHtml();
+  wireTrainingHandlers();
+}
+
+async function runningTabHtml() {
+  const runs = (await dbGetAll('runs')).sort((a, b) => b.date.localeCompare(a.date));
+  const weekDates = currentWeekDates();
+  const weekRuns = runs.filter(r => weekDates.includes(r.date));
+  const weekDist = weekRuns.reduce((s, r) => s + Number(r.distanceKm || 0), 0);
+  const monthDist = runs.filter(r => r.date.slice(0, 7) === todayISO().slice(0, 7)).reduce((s, r) => s + Number(r.distanceKm || 0), 0);
+  const pr = runs.reduce((best, r) => {
+    if (!r.distanceKm || !r.durationMin) return best;
+    const pace = r.durationMin / r.distanceKm;
+    return (!best || pace < best.pace) ? { pace, run: r } : best;
+  }, null);
+
+  return `
+    <div class="grid grid-4" style="margin-bottom:18px;">
+      <div class="stat track"><div class="stat-num">${round1(weekDist)} km</div><div class="stat-label">this week</div></div>
+      <div class="stat track"><div class="stat-num">${round1(monthDist)} km</div><div class="stat-label">this month</div></div>
+      <div class="stat track"><div class="stat-num">${runs.length}</div><div class="stat-label">total runs logged</div></div>
+      <div class="stat track"><div class="stat-num">${pr ? round1(pr.pace) + ' min/km' : '—'}</div><div class="stat-label">best pace (PR)</div></div>
+    </div>
+    <div class="row between" style="margin-bottom:12px;">
+      <div class="section-title">Log</div>
+      <button class="btn primary small" id="btn-add-run">+ Log a run</button>
+    </div>
+    ${runs.length ? `<div class="card">${runs.slice(0, 15).map(r => `
+      <div class="list-item">
+        <span>
+          <span class="pill track">${r.sessionType || 'moderate'}</span>
+          ${round1(r.distanceKm)} km in ${r.durationMin} min
+          ${r.distanceKm && r.durationMin ? `<span class="faint mono">(${round1(r.durationMin / r.distanceKm)} min/km)</span>` : ''}
+          ${r.notes ? `<div class="faint" style="font-size:12px;margin-top:2px;">${escapeHtml(r.notes)}</div>` : ''}
+        </span>
+        <span class="row" style="gap:8px;">
+          <span class="faint mono">${shortDate(r.date)}</span>
+          <button class="btn ghost small" data-del-run="${r.id}">✕</button>
+        </span>
+      </div>`).join('')}</div>` : `<div class="empty">No runs logged yet. You already run 5km+ comfortably — log one to start building the record.</div>`}
+  `;
+}
+
+async function strengthTabHtml() {
+  const sessions = (await dbGetAll('strengthSessions')).sort((a, b) => b.date.localeCompare(a.date));
+  const weekDates = currentWeekDates();
+  const weekCount = sessions.filter(s => weekDates.includes(s.date)).length;
+
+  return `
+    <div class="grid grid-3" style="margin-bottom:18px;">
+      <div class="stat track"><div class="stat-num">${weekCount}/3</div><div class="stat-label">sessions this week</div></div>
+      <div class="stat track"><div class="stat-num">${sessions.length}</div><div class="stat-label">total sessions</div></div>
+      <div class="stat track"><div class="stat-num">${countPRs(sessions)}</div><div class="stat-label">PRs logged</div></div>
+    </div>
+    <div class="row between" style="margin-bottom:12px;">
+      <div class="section-title">Log</div>
+      <button class="btn primary small" id="btn-add-strength">+ Log a session</button>
+    </div>
+    ${sessions.length ? `<div class="card">${sessions.slice(0, 15).map(s => `
+      <div class="list-item" style="align-items:flex-start;">
+        <span>
+          <span class="pill track">${escapeHtml(s.dayLabel || s.workoutType)}</span>
+          <div style="margin-top:4px;font-size:13px;">${(s.exercises || []).map(ex => `${escapeHtml(ex.name)} — ${ex.sets}×${ex.reps}${ex.load ? ' @ ' + escapeHtml(ex.load) : ''}${ex.pr ? ' <span class="pill amber">PR</span>' : ''}`).join('<br>')}</div>
+          ${s.rpe ? `<div class="faint" style="font-size:12px;margin-top:4px;">RPE ${s.rpe}/10</div>` : ''}
+          ${s.notes ? `<div class="faint" style="font-size:12px;">${escapeHtml(s.notes)}</div>` : ''}
+        </span>
+        <span class="row" style="gap:8px;">
+          <span class="faint mono">${shortDate(s.date)}</span>
+          <button class="btn ghost small" data-del-strength="${s.id}">✕</button>
+        </span>
+      </div>`).join('')}</div>` : `<div class="empty">No sessions logged yet. Use the 3-day split under the Program tab.</div>`}
+  `;
+}
+
+function countPRs(sessions) {
+  return sessions.reduce((n, s) => n + (s.exercises || []).filter(e => e.pr).length, 0);
+}
+
+async function recoveryTabHtml() {
+  const logs = (await dbGetAll('recoveryLogs')).sort((a, b) => b.date.localeCompare(a.date));
+  const last7 = logs.slice(0, 7);
+  const avgSleep = last7.length ? round1(last7.reduce((s, l) => s + Number(l.sleepHours || 0), 0) / last7.length) : 0;
+  const avgReadiness = last7.length ? round1(last7.reduce((s, l) => s + Number(l.readiness || 0), 0) / last7.length) : 0;
+
+  // overload flag: 2+ hard sessions in a row with no recovery day logged between
+  const [runs, strength] = await Promise.all([dbGetAll('runs'), dbGetAll('strengthSessions')]);
+  const last3days = [todayISO(), todayISO(-1), todayISO(-2)];
+  const hardSessions = last3days.filter(d =>
+    runs.some(r => r.date === d && r.sessionType === 'hard') ||
+    strength.some(s => s.date === d)
+  ).length;
+  const recentRecoveryLog = logs.some(l => last3days.includes(l.date) && Number(l.readiness) <= 2);
+  const overloadFlag = hardSessions >= 3 || (hardSessions >= 2 && recentRecoveryLog);
+
+  return `
+    ${overloadFlag ? `<div class="card" style="border-color:var(--danger);margin-bottom:16px;">
+        <strong style="color:var(--danger);font-size:13px;">Overload flag</strong>
+        <p class="muted" style="font-size:13px;margin:6px 0 0;">Multiple hard sessions stacked with low readiness. Given sleep is often short for you, consider a lighter or full recovery day next.</p>
+      </div>` : ''}
+    <div class="grid grid-3" style="margin-bottom:18px;">
+      <div class="stat violet"><div class="stat-num">${avgSleep || '—'}h</div><div class="stat-label">avg sleep (last 7 logs)</div></div>
+      <div class="stat violet"><div class="stat-num">${avgReadiness || '—'}/5</div><div class="stat-label">avg readiness</div></div>
+      <div class="stat violet"><div class="stat-num">${logs.length}</div><div class="stat-label">recovery logs total</div></div>
+    </div>
+    <div class="row between" style="margin-bottom:12px;">
+      <div class="section-title">Log</div>
+      <button class="btn primary small" id="btn-add-recovery">+ Log recovery</button>
+    </div>
+    ${logs.length ? `<div class="card">${logs.slice(0, 14).map(l => `
+      <div class="list-item">
+        <span>${l.sleepHours}h sleep · readiness ${l.readiness}/5 · session difficulty ${l.difficulty || '—'}/5
+          ${l.notes ? `<div class="faint" style="font-size:12px;">${escapeHtml(l.notes)}</div>` : ''}
+        </span>
+        <span class="faint mono">${shortDate(l.date)}</span>
+      </div>`).join('')}</div>` : `<div class="empty">No recovery logs yet. Since sleep tends to run short, this is the most important habit to keep consistent.</div>`}
+  `;
+}
+
+function programTabHtml() {
+  const days = Object.keys(STRENGTH_SPLIT);
+  return `
+    <div class="card" style="margin-bottom:16px;">
+      <strong style="font-size:13px;">3-day rotation</strong>
+      <p class="muted" style="font-size:13px;margin:6px 0 0;">Rotate A → B → C across your three gym days each week (order doesn't need to match the calendar day). Add weight or reps gradually — that progression is what "some experience, no structure" has been missing.</p>
+    </div>
+    <div class="grid grid-3">
+      ${days.map(d => `
+        <div class="card">
+          <span class="pill track">Day ${d}</span>
+          <div style="font-weight:600;margin:8px 0;font-size:14px;">${STRENGTH_SPLIT[d].label}</div>
+          <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-dim);">
+            ${STRENGTH_SPLIT[d].exercises.map(e => `<li>${e}</li>`).join('')}
+          </ul>
+        </div>`).join('')}
+    </div>
+    <p class="faint" style="font-size:12px;margin-top:14px;">Runs fill the non-gym days — easy pace most of the time, one longer effort on the weekend. Since you can already comfortably run 5km+, use easy runs for volume and save hard effort for one session a week.</p>
+  `;
+}
+
+function currentWeekDates() {
+  const now = new Date();
+  const jsDay = now.getDay();
+  const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
+  const arr = [];
+  for (let i = 0; i < 7; i++) arr.push(todayISO(mondayOffset + i));
+  return arr;
+}
+
+function wireTrainingHandlers() {
+  const addRun = document.getElementById('btn-add-run');
+  if (addRun) addRun.addEventListener('click', openRunModal);
+  const addStrength = document.getElementById('btn-add-strength');
+  if (addStrength) addStrength.addEventListener('click', openStrengthModal);
+  const addRecovery = document.getElementById('btn-add-recovery');
+  if (addRecovery) addRecovery.addEventListener('click', openRecoveryModal);
+  document.querySelectorAll('[data-del-run]').forEach(b => b.addEventListener('click', async () => {
+    await dbDelete('runs', b.dataset.delRun); renderTraining();
+  }));
+  document.querySelectorAll('[data-del-strength]').forEach(b => b.addEventListener('click', async () => {
+    await dbDelete('strengthSessions', b.dataset.delStrength); renderTraining();
+  }));
+}
+
+function openRunModal() {
+  openModal(`
+    <h3>Log a run</h3>
+    <div class="field"><label>Date</label><input type="date" id="run-date" value="${todayISO()}"></div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Distance (km)</label><input type="number" step="0.1" id="run-dist" placeholder="5.0"></div>
+      <div class="field" style="flex:1;"><label>Duration (min)</label><input type="number" step="0.5" id="run-dur" placeholder="28"></div>
+    </div>
+    <div class="field"><label>Session type</label>
+      <select id="run-type"><option value="easy">Easy</option><option value="moderate" selected>Moderate</option><option value="hard">Hard</option></select>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="run-notes" placeholder="Park loop, felt good..."></textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-run">Save</button>
+    </div>
+  `);
+  document.getElementById('save-run').addEventListener('click', async () => {
+    const distanceKm = Number(document.getElementById('run-dist').value);
+    const durationMin = Number(document.getElementById('run-dur').value);
+    if (!distanceKm || !durationMin) { toast('Enter distance and duration.', true); return; }
+    await dbPut('runs', {
+      id: uid(), date: document.getElementById('run-date').value, distanceKm, durationMin,
+      sessionType: document.getElementById('run-type').value,
+      notes: document.getElementById('run-notes').value, createdAt: nowISO()
+    });
+    await bumpSkillEvidence('Endurance');
+    closeModal(); toast('Run logged.'); renderTraining();
+  });
+}
+
+function openStrengthModal() {
+  const days = Object.keys(STRENGTH_SPLIT);
+  openModal(`
+    <h3>Log a strength session</h3>
+    <div class="field"><label>Date</label><input type="date" id="str-date" value="${todayISO()}"></div>
+    <div class="field"><label>Program day</label>
+      <select id="str-day">${days.map(d => `<option value="${d}">${d} — ${STRENGTH_SPLIT[d].label}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Exercises done (one per line: name, sets, reps, load, PR?)</label>
+      <textarea id="str-ex" placeholder="Back Squat, 4, 8, 60kg, no&#10;RDL, 3, 10, 40kg, yes"></textarea>
+    </div>
+    <div class="field"><label>Session RPE (1–10)</label><input type="number" id="str-rpe" min="1" max="10" placeholder="7"></div>
+    <div class="field"><label>Notes</label><textarea id="str-notes"></textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-strength">Save</button>
+    </div>
+  `);
+  document.getElementById('save-strength').addEventListener('click', async () => {
+    const raw = document.getElementById('str-ex').value.trim();
+    if (!raw) { toast('Add at least one exercise.', true); return; }
+    const exercises = raw.split('\n').filter(Boolean).map(line => {
+      const [name, sets, reps, load, pr] = line.split(',').map(s => (s || '').trim());
+      return { name: name || 'Exercise', sets: sets || '-', reps: reps || '-', load: load || '', pr: /^y/i.test(pr || '') };
+    });
+    const day = document.getElementById('str-day').value;
+    await dbPut('strengthSessions', {
+      id: uid(), date: document.getElementById('str-date').value,
+      dayLabel: `${day} — ${STRENGTH_SPLIT[day].label}`, workoutType: STRENGTH_SPLIT[day].label,
+      exercises, rpe: document.getElementById('str-rpe').value,
+      notes: document.getElementById('str-notes').value, createdAt: nowISO()
+    });
+    await bumpSkillEvidence('Strength');
+    closeModal(); toast('Session logged.'); renderTraining();
+  });
+}
+
+function openRecoveryModal() {
+  openModal(`
+    <h3>Log recovery</h3>
+    <div class="field"><label>Date</label><input type="date" id="rec-date" value="${todayISO()}"></div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Sleep (hours)</label><input type="number" step="0.5" id="rec-sleep" placeholder="6"></div>
+      <div class="field" style="flex:1;"><label>Readiness (1–5)</label><input type="number" id="rec-ready" min="1" max="5" placeholder="3"></div>
+    </div>
+    <div class="field"><label>Today's training difficulty (1–5, 0 if rest day)</label><input type="number" id="rec-diff" min="0" max="5" placeholder="0"></div>
+    <div class="field"><label>Notes</label><textarea id="rec-notes"></textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-recovery">Save</button>
+    </div>
+  `);
+  document.getElementById('save-recovery').addEventListener('click', async () => {
+    const sleepHours = document.getElementById('rec-sleep').value;
+    const readiness = document.getElementById('rec-ready').value;
+    if (!sleepHours || !readiness) { toast('Enter sleep hours and readiness.', true); return; }
+    await dbPut('recoveryLogs', {
+      id: uid(), date: document.getElementById('rec-date').value, sleepHours, readiness,
+      difficulty: document.getElementById('rec-diff').value, notes: document.getElementById('rec-notes').value,
+      createdAt: nowISO()
+    });
+    closeModal(); toast('Recovery logged.');
+    if (currentPage === 'training') renderTraining(); else if (currentPage === 'today') renderToday();
+  });
+}
+/* ============================================================
+   LEDGER — Academic page
+   ============================================================ */
+async function renderAcademic() {
+  const container = document.getElementById('page-academic');
+  const [courses, assignments, sessions] = await Promise.all([
+    dbGetAll('courses'), dbGetAll('assignments'), dbGetAll('studySessions')
+  ]);
+  courses.sort((a, b) => (a.day || '').localeCompare(b.day || ''));
+
+  const weekDates = currentWeekDates();
+  const weekSessions = sessions.filter(s => weekDates.includes(s.date));
+  const inputCount = weekSessions.filter(s => s.type === 'input').length;
+  const practiceCount = weekSessions.filter(s => s.type === 'practice').length;
+  const outputCount = weekSessions.filter(s => s.type === 'output').length;
+
+  container.innerHTML = `
+    <div class="page-head">
+      <div><h1 class="page-title">Academic</h1><div class="page-sub">Input → Practice → Output. Output is what counts most toward your score.</div></div>
+      <button class="btn primary" id="btn-add-session">+ Log a study session</button>
+    </div>
+
+    <div class="section">
+      <div class="grid grid-3">
+        <div class="stat ink"><div class="stat-num">${inputCount}</div><div class="stat-label">input sessions this week</div></div>
+        <div class="stat ink"><div class="stat-num">${practiceCount}</div><div class="stat-label">practice sessions this week</div></div>
+        <div class="stat amber"><div class="stat-num">${outputCount}</div><div class="stat-label">output produced this week</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head between"><div class="section-title">Courses <span class="n">(${courses.length})</span></div><button class="btn small" id="btn-add-course">+ Course</button></div>
+      <div class="grid grid-2">
+        ${courses.map(c => `
+          <div class="card">
+            <div class="row between">
+              <strong style="font-size:14px;">${escapeHtml(c.code)}</strong>
+              <span class="pill ink">${escapeHtml(c.day || '')}</span>
+            </div>
+            <div style="font-size:13px;margin:4px 0;">${escapeHtml(c.name)}</div>
+            <div class="faint" style="font-size:12px;">${escapeHtml(c.time || '')}${c.professor ? ' · ' + escapeHtml(c.professor) : ''}</div>
+            <div class="row" style="margin-top:8px;gap:6px;"><button class="btn ghost small" data-edit-course="${c.id}">Edit</button><button class="btn ghost small" data-del-course="${c.id}">Delete</button></div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head between">
+        <div class="section-title">Assignments &amp; deadlines <span class="n">(${assignments.filter(a => a.status !== 'done').length} open)</span></div>
+        <button class="btn small" id="btn-add-assignment">+ Assignment</button>
+      </div>
+      ${assignments.length ? `<div class="card">${assignments.sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || '')).map(a => `
+        <div class="list-item">
+          <span>
+            <span class="pill ${a.status === 'done' ? 'signal' : (a.priority === 'high' ? 'danger' : 'ink')}">${a.status === 'done' ? 'done' : a.priority}</span>
+            ${escapeHtml(a.title)} <span class="faint">— ${escapeHtml(a.course || '')}</span>
+          </span>
+          <span class="row" style="gap:8px;">
+            <span class="faint mono">${a.dueDate ? shortDate(a.dueDate) : 'no date'}</span>
+            ${a.status !== 'done' ? `<button class="btn small" data-done-assign="${a.id}">Mark done</button>` : ''}
+            <button class="btn ghost small" data-del-assign="${a.id}">✕</button>
+          </span>
+        </div>`).join('')}</div>` : `<div class="empty">No assignments logged yet.</div>`}
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Recent study sessions</div></div>
+      ${sessions.length ? `<div class="card">${sessions.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10).map(s => `
+        <div class="list-item">
+          <span><span class="pill ${s.type === 'output' ? 'amber' : 'ink'}">${s.type}</span> ${escapeHtml(s.activity)} <span class="faint">— ${escapeHtml(s.course || '')}</span></span>
+          <span class="faint mono">${shortDate(s.date)}</span>
+        </div>`).join('')}</div>` : `<div class="empty">No study sessions logged yet.</div>`}
+    </div>
+  `;
+
+  document.getElementById('btn-add-session').addEventListener('click', () => openStudySessionModal(courses));
+  document.getElementById('btn-add-course').addEventListener('click', () => openCourseModal());
+  container.querySelectorAll('[data-edit-course]').forEach(b => b.addEventListener('click', () => openCourseModal(courses.find(x => x.id === b.dataset.editCourse))));
+  container.querySelectorAll('[data-del-course]').forEach(b => b.addEventListener('click', async () => { if (confirm('Delete this course?')) { await dbDelete('courses', b.dataset.delCourse); renderAcademic(); } }));
+  document.getElementById('btn-add-assignment').addEventListener('click', () => openAssignmentModal(courses));
+  container.querySelectorAll('[data-done-assign]').forEach(b => b.addEventListener('click', async () => {
+    const a = await dbGet('assignments', b.dataset.doneAssign); a.status = 'done'; await dbPut('assignments', a); renderAcademic();
+  }));
+  container.querySelectorAll('[data-del-assign]').forEach(b => b.addEventListener('click', async () => {
+    await dbDelete('assignments', b.dataset.delAssign); renderAcademic();
+  }));
+}
+
+function openCourseModal(c) {
+  if (c && !c.id) c = null;
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  openModal(`
+    <h3>${c ? 'Edit' : 'Add'} course</h3>
+    <div class="field"><label>Code</label><input id="c-code" value="${escapeHtml(c ? c.code || '' : '')}" placeholder="e.g. BIO 101"></div>
+    <div class="field"><label>Name</label><input id="c-name" value="${escapeHtml(c ? c.name : '')}" placeholder="Course title"></div>
+    <div class="field"><label>Teacher</label><input id="c-prof" value="${escapeHtml(c ? c.professor || '' : '')}"></div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Day</label><select id="c-day">${days.map(d => `<option ${c && c.day === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
+      <div class="field" style="flex:1;"><label>Time</label><input id="c-time" value="${escapeHtml(c ? c.time || '' : '')}" placeholder="09:00–11:20"></div>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-course">Save</button>
+    </div>`);
+  document.getElementById('save-course').addEventListener('click', async () => {
+    const name = document.getElementById('c-name').value.trim();
+    if (!name) { toast('Enter a course name.', true); return; }
+    await dbPut('courses', Object.assign({ id: uid(), priority: 'medium', status: 'active', notes: '' }, c || {}, {
+      code: document.getElementById('c-code').value, name, professor: document.getElementById('c-prof').value,
+      day: document.getElementById('c-day').value, time: document.getElementById('c-time').value }));
+    closeModal(); toast('Saved.'); renderAcademic();
+  });
+}
+
+function openAssignmentModal(courses) {
+  openModal(`
+    <h3>Add assignment / deadline</h3>
+    <div class="field"><label>Title</label><input id="a-title" placeholder="Essay draft, reading response..."></div>
+    <div class="field"><label>Course</label>
+      <select id="a-course"><option value="">—</option>${courses.map(c => `<option value="${escapeHtml(c.code)}">${escapeHtml(c.code)}</option>`).join('')}</select>
+    </div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Due date</label><input type="date" id="a-due"></div>
+      <div class="field" style="flex:1;"><label>Priority</label>
+        <select id="a-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+      </div>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-assign">Save</button>
+    </div>
+  `);
+  document.getElementById('save-assign').addEventListener('click', async () => {
+    const title = document.getElementById('a-title').value.trim();
+    if (!title) { toast('Enter a title.', true); return; }
+    await dbPut('assignments', {
+      id: uid(), title, course: document.getElementById('a-course').value,
+      dueDate: document.getElementById('a-due').value, priority: document.getElementById('a-priority').value,
+      status: 'open', createdAt: nowISO()
+    });
+    closeModal(); toast('Added.'); renderAcademic();
+  });
+}
+
+function openStudySessionModal(courses) {
+  openModal(`
+    <h3>Log a study session</h3>
+    <div class="field"><label>Date</label><input type="date" id="s-date" value="${todayISO()}"></div>
+    <div class="field"><label>Type</label>
+      <select id="s-type">
+        <option value="input">Input — reading / lecture / watching</option>
+        <option value="practice">Practice — writing / solving / discussing</option>
+        <option value="output">Output — finished essay / presentation / notes</option>
+      </select>
+    </div>
+    <div class="field"><label>What did you do</label><input id="s-activity" placeholder="e.g. Read ch.3, drafted argument outline..."></div>
+    <div class="field"><label>Course (optional)</label>
+      <select id="s-course"><option value="">—</option>${courses.map(c => `<option value="${escapeHtml(c.code)}">${escapeHtml(c.code)}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Skill developed (optional)</label>
+      <select id="s-skill"><option value="">—</option>${SKILL_TREE.Academic.map(s => `<option>${s}</option>`).join('')}</select>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-session">Save</button>
+    </div>
+  `);
+  document.getElementById('save-session').addEventListener('click', async () => {
+    const activity = document.getElementById('s-activity').value.trim();
+    if (!activity) { toast('Describe what you did.', true); return; }
+    await dbPut('studySessions', {
+      id: uid(), date: document.getElementById('s-date').value, type: document.getElementById('s-type').value,
+      activity, course: document.getElementById('s-course').value, createdAt: nowISO()
+    });
+    const skill = document.getElementById('s-skill').value;
+    if (skill) await bumpSkillEvidence(skill);
+    closeModal(); toast('Session logged.'); renderAcademic();
+  });
+}
+/* ============================================================
+   LEDGER — Languages page
+   ============================================================ */
+async function getLangs() { return getMeta('languages', []); }
+async function renderLanguages() {
+  const container = document.getElementById('page-languages');
+  const langs = await getLangs();
+  const logs = (await dbGetAll('languageLogs')).sort((a, b) => b.date.localeCompare(a.date));
+  container.innerHTML = `
+    <div class="page-head">
+      <div><h1 class="page-title">Languages</h1><div class="page-sub">Track any language you are learning or improving.</div></div>
+      <div class="row"><button class="btn ${langs.length ? '' : 'primary'}" id="btn-new-lang">+ Language</button>${langs.length ? '<button class="btn primary" id="btn-add-lang">+ Log practice</button>' : ''}</div>
+    </div>
+    ${langs.length ? `<div class="grid grid-2">${langs.map(l => {
+      const ls = logs.filter(x => x.language === l); const st = computeStreakFromDates(ls.map(x => x.date));
+      const weak = ls.filter(x => x.type === 'weakness').slice(0, 3);
+      return `<div class="card"><div class="row between"><strong style="font-size:14px;">${escapeHtml(l)}</strong><span class="pill signal">${st}d streak</span></div>
+        <div class="bar-track" style="margin:10px 0 4px;"><div class="bar-fill" style="width:${clamp(st * 10, 0, 100)}%;background:var(--signal);"></div></div>
+        <div class="faint" style="font-size:11px;">${ls.length} sessions logged</div>
+        ${weak.map(w => `<div class="list-item"><span>${escapeHtml(w.note || '')}</span><span class="faint mono">${shortDate(w.date)}</span></div>`).join('')}
+        <button class="btn ghost small" data-del-lang="${escapeHtml(l)}" style="margin-top:8px;">Remove</button></div>`; }).join('')}</div>` : '<div class="empty">Add a language to start tracking practice.</div>'}
+    <div class="section" style="margin-top:24px;">
+      <div class="section-head"><div class="section-title">Recent activity</div></div>
+      ${logs.length ? `<div class="card">${logs.slice(0, 15).map(l => `
+        <div class="list-item"><span><span class="pill signal">${escapeHtml(l.language)}</span> <span class="pill ${l.type === 'speaking' ? 'amber' : ''}">${escapeHtml(l.type)}</span> ${escapeHtml(l.note || '')}</span><span class="faint mono">${shortDate(l.date)}</span></div>`).join('')}</div>` : '<div class="empty">No language sessions logged yet.</div>'}
+    </div>`;
+  document.getElementById('btn-new-lang').addEventListener('click', () => {
+    openModal(`<h3>Add a language</h3><div class="field"><label>Language</label><input id="nl-name" placeholder="e.g. English, Spanish, Korean"></div>
+      <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" id="nl-save">Add</button></div>`);
+    document.getElementById('nl-save').addEventListener('click', async () => {
+      const n = document.getElementById('nl-name').value.trim(); if (!n) return;
+      const cur = await getLangs(); if (!cur.includes(n)) cur.push(n); await setMeta('languages', cur); closeModal(); renderLanguages();
+    });
+  });
+  const addBtn = document.getElementById('btn-add-lang'); if (addBtn) addBtn.addEventListener('click', openLanguageModal);
+  container.querySelectorAll('[data-del-lang]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Remove this language? Logged sessions are kept.')) return;
+    await setMeta('languages', (await getLangs()).filter(x => x !== b.dataset.delLang)); renderLanguages();
+  }));
+}
+
+function computeStreakFromDates(dates) {
+  const set = new Set(dates);
+  let streak = 0;
+  let cursor = todayISO();
+  while (set.has(cursor)) {
+    streak++;
+    cursor = todayISO(-streak);
+  }
+  return streak;
+}
+
+async function openLanguageModal() {
+  const langs = await getLangs();
+  openModal(`
+    <h3>Log language practice</h3>
+    <div class="field"><label>Date</label><input type="date" id="l-date" value="${todayISO()}"></div>
+    <div class="field"><label>Language</label><select id="l-lang">${langs.map(l => `<option>${escapeHtml(l)}</option>`).join('')}</select></div>
+    <div class="field"><label>Type</label>
+      <select id="l-type"><option value="reading">Reading</option><option value="writing">Writing</option><option value="listening">Listening</option><option value="speaking">Speaking</option><option value="vocabulary">Vocabulary</option><option value="weakness">Weakness / mistake noticed</option></select>
+    </div>
+    <div class="field"><label>Note</label><textarea id="l-note" placeholder="What did you practice, or what mistake did you notice?"></textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" id="save-lang">Save</button></div>`);
+  document.getElementById('save-lang').addEventListener('click', async () => {
+    const language = document.getElementById('l-lang').value, type = document.getElementById('l-type').value;
+    await dbPut('languageLogs', { id: uid(), date: document.getElementById('l-date').value, language, type, note: document.getElementById('l-note').value, createdAt: nowISO() });
+    if (['speaking', 'listening', 'reading', 'writing'].includes(type)) await bumpSkillEvidence(type[0].toUpperCase() + type.slice(1));
+    closeModal(); toast('Logged.'); renderLanguages();
+  });
+}
+/* ============================================================
+   LEDGER — Projects / Portfolio page
+   ============================================================ */
+async function renderProjects() {
+  const container = document.getElementById('page-projects');
+  const projects = (await dbGetAll('projects')).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+  const ideas = projects.filter(p => p.status === 'idea');
+  const active = projects.filter(p => p.status === 'active');
+  const done = projects.filter(p => p.status === 'done');
+
+  container.innerHTML = `
+    <div class="page-head">
+      <div><h1 class="page-title">Projects</h1><div class="page-sub">Incubator for ideas, then a tracked project once you commit — no idea has been picked yet, and that's fine.</div></div>
+      <button class="btn primary" id="btn-add-project">+ New idea / project</button>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Active <span class="n">(${active.length})</span></div></div>
+      ${active.length ? `<div class="grid grid-2">${active.map(projectCard).join('')}</div>` : `<div class="empty">Nothing active yet.</div>`}
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Incubator — ideas not yet committed <span class="n">(${ideas.length})</span></div></div>
+      ${ideas.length ? `<div class="card">${ideas.map(p => `
+        <div class="list-item">
+          <span>${escapeHtml(p.name)} <span class="faint">— ${escapeHtml(p.purpose || '')}</span></span>
+          <span class="row" style="gap:8px;">
+            <button class="btn small" data-commit="${p.id}">Commit to this</button>
+            <button class="btn ghost small" data-del-project="${p.id}">✕</button>
+          </span>
+        </div>`).join('')}</div>` : `<div class="empty">No ideas logged. Drop loose ideas here as they come — you don't need to decide yet.</div>`}
+    </div>
+
+    ${done.length ? `<div class="section">
+      <div class="section-head"><div class="section-title">Completed <span class="n">(${done.length})</span></div></div>
+      <div class="grid grid-2">${done.map(projectCard).join('')}</div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('btn-add-project').addEventListener('click', openProjectModal);
+  container.querySelectorAll('[data-commit]').forEach(b => b.addEventListener('click', async () => {
+    const p = await dbGet('projects', b.dataset.commit);
+    p.status = 'active'; p.startDate = p.startDate || todayISO();
+    await dbPut('projects', p); renderProjects();
+  }));
+  container.querySelectorAll('[data-del-project]').forEach(b => b.addEventListener('click', async () => {
+    await dbDelete('projects', b.dataset.delProject); renderProjects();
+  }));
+  container.querySelectorAll('[data-log-work]').forEach(b => b.addEventListener('click', () => logProjectWork(b.dataset.logWork)));
+  container.querySelectorAll('[data-complete-project]').forEach(b => b.addEventListener('click', async () => {
+    const p = await dbGet('projects', b.dataset.completeProject);
+    p.status = 'done'; await dbPut('projects', p); toast('Project marked complete.'); renderProjects();
+  }));
+}
+
+function projectCard(p) {
+  const tasksDone = (p.tasks || []).filter(t => t.done).length;
+  const tasksTotal = (p.tasks || []).length;
+  return `
+    <div class="card">
+      <div class="row between">
+        <strong style="font-size:14px;">${escapeHtml(p.name)}</strong>
+        <span class="pill amber">${p.status}</span>
+      </div>
+      <p class="muted" style="font-size:13px;margin:6px 0;">${escapeHtml(p.purpose || '')}</p>
+      ${p.skill ? `<span class="pill violet">${escapeHtml(p.skill)}</span>` : ''}
+      ${tasksTotal ? `<div style="margin-top:10px;"><div class="bar-track"><div class="bar-fill" style="width:${Math.round(tasksDone / tasksTotal * 100)}%;background:var(--amber);"></div></div><div class="faint" style="font-size:11px;margin-top:4px;">${tasksDone}/${tasksTotal} tasks</div></div>` : ''}
+      ${p.evidence ? `<div class="faint" style="font-size:12px;margin-top:8px;">Evidence: ${escapeHtml(p.evidence)}</div>` : ''}
+      <div class="row" style="margin-top:10px;gap:8px;">
+        ${p.status === 'active' ? `<button class="btn small" data-log-work="${p.id}">Log work</button>` : ''}
+        ${p.status === 'active' ? `<button class="btn ghost small" data-complete-project="${p.id}">Mark complete</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function openProjectModal() {
+  openModal(`
+    <h3>New idea / project</h3>
+    <div class="field"><label>Name</label><input id="p-name" placeholder="Working title"></div>
+    <div class="field"><label>Purpose</label><input id="p-purpose" placeholder="Why this, what it's for"></div>
+    <div class="field"><label>Skill being developed</label>
+      <select id="p-skill"><option value="">—</option>${SKILL_TREE.Professional.concat(SKILL_TREE.Academic).map(s => `<option>${s}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Deadline (optional)</label><input type="date" id="p-deadline"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-project">Save as idea</button>
+    </div>
+  `);
+  document.getElementById('save-project').addEventListener('click', async () => {
+    const name = document.getElementById('p-name').value.trim();
+    if (!name) { toast('Enter a name.', true); return; }
+    await dbPut('projects', {
+      id: uid(), name, purpose: document.getElementById('p-purpose').value,
+      skill: document.getElementById('p-skill').value, deadline: document.getElementById('p-deadline').value,
+      status: 'idea', tasks: [], milestones: [], evidence: '', reflection: '', createdAt: nowISO()
+    });
+    closeModal(); toast('Idea saved to incubator.'); renderProjects();
+  });
+}
+
+function logProjectWork(projectId) {
+  openModal(`
+    <h3>Log work</h3>
+    <div class="field"><label>What did you do</label><textarea id="pw-desc" placeholder="Task completed, milestone reached, output produced..."></textarea></div>
+    <div class="field"><label>Evidence produced (optional)</label><input id="pw-evidence" placeholder="Link, file name, or description"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-work">Save</button>
+    </div>
+  `);
+  document.getElementById('save-work').addEventListener('click', async () => {
+    const p = await dbGet('projects', projectId);
+    const desc = document.getElementById('pw-desc').value.trim();
+    if (!desc) { toast('Describe the work.', true); return; }
+    p.tasks = p.tasks || [];
+    p.tasks.push({ text: desc, done: true, date: todayISO() });
+    const evidence = document.getElementById('pw-evidence').value;
+    if (evidence) p.evidence = (p.evidence ? p.evidence + '; ' : '') + evidence;
+    p.lastWorkedDate = todayISO();
+    await dbPut('projects', p);
+    if (p.skill) await bumpSkillEvidence(p.skill);
+    closeModal(); toast('Work logged.'); renderProjects();
+  });
+}
+/* ============================================================
+   LEDGER — Skill Tree page
+   ============================================================ */
+
+// evidence thresholds to advance a level — deliberately not 1:1 with checkbox counts
+const LEVEL_THRESHOLDS = [0, 3, 8, 16, 28, 45];
+
+function levelFromEvidence(count) {
+  let lvl = 1;
+  for (let i = 1; i < LEVEL_THRESHOLDS.length; i++) {
+    if (count >= LEVEL_THRESHOLDS[i]) lvl = i + 1;
+  }
+  return clamp(lvl, 1, LEVEL_THRESHOLDS.length);
+}
+
+async function bumpSkillEvidence(skillName) {
+  const skills = await dbGetAll('skills');
+  const skill = skills.find(s => s.name === skillName);
+  if (!skill) return;
+  skill.evidenceCount = (skill.evidenceCount || 0) + 1;
+  skill.level = levelFromEvidence(skill.evidenceCount);
+  skill.lastPracticed = todayISO();
+  await dbPut('skills', skill);
+}
+
+async function renderSkills() {
+  const container = document.getElementById('page-skills');
+  const skills = await dbGetAll('skills');
+  const groups = Object.keys(SKILL_TREE);
+
+  container.innerHTML = `
+    <div class="page-head">
+      <div><h1 class="page-title">Skill Tree</h1><div class="page-sub">Levels advance on logged evidence — sessions, output, PRs — not on checkbox count alone.</div></div>
+    </div>
+    ${groups.map(group => {
+      const items = skills.filter(s => s.group === group).sort((a, b) => a.name.localeCompare(b.name));
+      const color = group === 'Physical' ? 'track' : group === 'Languages' ? 'signal' : group === 'Professional' ? 'amber' : 'ink';
+      return `
+        <div class="section">
+          <div class="section-head"><div class="section-title">${group}</div></div>
+          <div class="grid grid-3">
+            ${items.map(s => {
+              const nextThreshold = LEVEL_THRESHOLDS[Math.min(s.level, LEVEL_THRESHOLDS.length - 1)] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+              const prevThreshold = LEVEL_THRESHOLDS[s.level - 1] || 0;
+              const span = Math.max(1, nextThreshold - prevThreshold);
+              const progress = clamp(Math.round(((s.evidenceCount - prevThreshold) / span) * 100), 0, 100);
+              return `
+                <div class="card">
+                  <div class="row between"><strong style="font-size:13px;">${escapeHtml(s.name)}</strong><span class="pill ${color}">Lv ${s.level}</span></div>
+                  <div class="bar-track" style="margin-top:10px;"><div class="bar-fill" style="width:${progress}%;background:var(--${color === 'faint' ? 'text-faint' : color});"></div></div>
+                  <div class="faint" style="font-size:11px;margin-top:5px;">${s.evidenceCount} evidence logged ${s.lastPracticed ? '· last ' + shortDate(s.lastPracticed) : '· not started'}</div>
+                </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+    }).join('')}
+  `;
+}
+/* ============================================================
+   LEDGER — Heatmap & Charts page (pure canvas, no libraries)
+   ============================================================ */
+async function renderCharts() {
+  const container = document.getElementById('page-charts');
+  container.innerHTML = `
+    <div class="page-head"><div><h1 class="page-title">Heatmap &amp; Charts</h1><div class="page-sub">Consistency over the last 12 weeks, and weekly performance score trend.</div></div></div>
+    <div class="section">
+      <div class="section-head"><div class="section-title">Activity heatmap (any logged action)</div></div>
+      <div class="card"><canvas id="heatmap-canvas" style="width:100%;height:150px;"></canvas></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><div class="section-title">Daily score — last 14 days</div></div>
+      <div class="card"><canvas id="score-canvas" style="width:100%;height:180px;"></canvas></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><div class="section-title">Weekly running distance — last 8 weeks</div></div>
+      <div class="card"><canvas id="run-canvas" style="width:100%;height:180px;"></canvas></div>
+    </div>
+  `;
+  await drawHeatmap();
+  await drawScoreLine();
+  await drawRunBars();
+}
+
+async function collectActivityDates() {
+  const stores = ['habitLogs', 'runs', 'strengthSessions', 'studySessions', 'languageLogs', 'recoveryLogs'];
+  const all = await Promise.all(stores.map(s => dbGetAll(s)));
+  const dates = {};
+  all.flat().forEach(rec => {
+    if (rec.date) dates[rec.date] = (dates[rec.date] || 0) + 1;
+  });
+  return dates;
+}
+
+function setupCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h: rect.height };
+}
+
+async function drawHeatmap() {
+  const canvas = document.getElementById('heatmap-canvas');
+  if (!canvas) return;
+  const { ctx, w, h } = setupCanvas(canvas);
+  const dates = await collectActivityDates();
+  const weeks = 12;
+  const cell = Math.min(14, (w - 20) / weeks);
+  const gap = 3;
+  const startOffset = -(weeks * 7 - 1);
+
+  ctx.clearRect(0, 0, w, h);
+  for (let week = 0; week < weeks; week++) {
+    for (let d = 0; d < 7; d++) {
+      const dayIndex = startOffset + week * 7 + d;
+      const iso = todayISO(dayIndex);
+      const count = dates[iso] || 0;
+      const intensity = clamp(count / 4, 0, 1);
+      ctx.fillStyle = count === 0 ? '#22252b' : mixColor('#123a2c', '#35c98d', intensity);
+      const x = 10 + week * (cell + gap);
+      const y = 10 + d * (cell + gap);
+      roundRect(ctx, x, y, cell, cell, 2);
+      ctx.fill();
+    }
+  }
+}
+
+function mixColor(c1, c2, t) {
+  const p1 = hexToRgb(c1), p2 = hexToRgb(c2);
+  const r = Math.round(p1.r + (p2.r - p1.r) * t);
+  const g = Math.round(p1.g + (p2.g - p1.g) * t);
+  const b = Math.round(p1.b + (p2.b - p1.b) * t);
+  return `rgb(${r},${g},${b})`;
+}
+function hexToRgb(hex) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+async function drawScoreLine() {
+  const canvas = document.getElementById('score-canvas');
+  if (!canvas) return;
+  const { ctx, w, h } = setupCanvas(canvas);
+  const days = [];
+  for (let i = -13; i <= 0; i++) days.push(todayISO(i));
+  const scores = [];
+  for (const d of days) scores.push(await computeDailyScore(d));
+
+  ctx.clearRect(0, 0, w, h);
+  const pad = 24;
+  const maxY = 100;
+  const stepX = (w - pad * 2) / (days.length - 1);
+
+  // gridlines
+  ctx.strokeStyle = '#22252b';
+  ctx.lineWidth = 1;
+  [0, 25, 50, 75, 100].forEach(v => {
+    const y = h - pad - (v / maxY) * (h - pad * 2);
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+  });
+
+  ctx.strokeStyle = '#6d8bff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  scores.forEach((s, i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - (s / maxY) * (h - pad * 2);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = '#6d8bff';
+  scores.forEach((s, i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - (s / maxY) * (h - pad * 2);
+    ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill();
+  });
+}
+
+async function drawRunBars() {
+  const canvas = document.getElementById('run-canvas');
+  if (!canvas) return;
+  const { ctx, w, h } = setupCanvas(canvas);
+  const runs = await dbGetAll('runs');
+  const weeks = [];
+  const now = new Date();
+  const jsDay = now.getDay();
+  const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
+  for (let i = 7; i >= 0; i--) {
+    const weekStart = mondayOffset - i * 7;
+    const dates = [];
+    for (let d = 0; d < 7; d++) dates.push(todayISO(weekStart + d));
+    const dist = runs.filter(r => dates.includes(r.date)).reduce((s, r) => s + Number(r.distanceKm || 0), 0);
+    weeks.push(dist);
+  }
+  const maxDist = Math.max(5, ...weeks);
+  ctx.clearRect(0, 0, w, h);
+  const pad = 24;
+  const barW = (w - pad * 2) / weeks.length * 0.6;
+  const gap = (w - pad * 2) / weeks.length;
+  weeks.forEach((dist, i) => {
+    const barH = (dist / maxDist) * (h - pad * 2);
+    const x = pad + i * gap + (gap - barW) / 2;
+    const y = h - pad - barH;
+    ctx.fillStyle = '#ff5d2e';
+    roundRect(ctx, x, y, barW, barH, 2);
+    ctx.fill();
+  });
+}
+/* ============================================================
+   LEDGER — Reflection page (daily + weekly)
+   ============================================================ */
+let reflectionTab = 'daily';
+
+async function renderReflection() {
+  const container = document.getElementById('page-reflection');
+  container.innerHTML = `
+    <div class="page-head"><div><h1 class="page-title">Reflection</h1><div class="page-sub">Short, honest, and quick — five minutes, not an essay.</div></div></div>
+    <div class="row" style="margin-bottom:18px;border-bottom:1px solid var(--line);">
+      ${['daily','weekly'].map(t => `
+        <button class="btn ghost" data-rtab="${t}" style="border-bottom:2px solid ${reflectionTab === t ? 'var(--violet)' : 'transparent'};border-radius:0;color:${reflectionTab === t ? 'var(--text)' : 'var(--text-dim)'};">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}
+    </div>
+    <div id="reflection-body"></div>
+  `;
+  container.querySelectorAll('[data-rtab]').forEach(b => b.addEventListener('click', () => { reflectionTab = b.dataset.rtab; renderReflection(); }));
+  if (reflectionTab === 'daily') await renderDailyReflection();
+  else await renderWeeklyReflection();
+}
+
+const DEFAULT_PROMPTS = ['What did I accomplish?', 'What did I learn?', 'What was difficult?', 'What should I improve?', "Tomorrow's most important task"];
+async function getPrompts() { return getMeta('prompts', DEFAULT_PROMPTS); }
+async function renderDailyReflection() {
+  const P = await getPrompts();
+  const body = document.getElementById('reflection-body');
+  const iso = todayISO();
+  const existing = (await dbGetAll('dailyReflections')).find(r => r.date === iso);
+  const past = (await dbGetAll('dailyReflections')).sort((a, b) => b.date.localeCompare(a.date)).filter(r => r.date !== iso);
+
+  body.innerHTML = `
+    <div class="card">
+      <div class="field"><label>${escapeHtml(P[0])}</label><textarea id="r1">${escapeHtml(existing?.accomplished || '')}</textarea></div>
+      <div class="field"><label>${escapeHtml(P[1])}</label><textarea id="r2">${escapeHtml(existing?.learned || '')}</textarea></div>
+      <div class="field"><label>${escapeHtml(P[2])}</label><textarea id="r3">${escapeHtml(existing?.difficult || '')}</textarea></div>
+      <div class="field"><label>${escapeHtml(P[3])}</label><textarea id="r4">${escapeHtml(existing?.improve || '')}</textarea></div>
+      <div class="field"><label>${escapeHtml(P[4])}</label><input id="r5" value="${escapeHtml(existing?.tomorrow || '')}"></div>
+      <button class="btn primary" id="save-reflection">${existing ? 'Update' : 'Save'} reflection</button>
+    </div>
+    <div class="section" style="margin-top:24px;">
+      <div class="section-head"><div class="section-title">Past reflections</div></div>
+      ${past.length ? past.slice(0, 7).map(r => `
+        <div class="card" style="margin-bottom:10px;">
+          <div class="faint mono" style="font-size:11px;margin-bottom:6px;">${shortDate(r.date)}</div>
+          <div style="font-size:13px;"><strong>Accomplished:</strong> ${escapeHtml(r.accomplished || '—')}</div>
+          <div style="font-size:13px;"><strong>Tomorrow:</strong> ${escapeHtml(r.tomorrow || '—')}</div>
+        </div>`).join('') : '<div class="empty">No past reflections yet.</div>'}
+    </div>
+  `;
+  document.getElementById('save-reflection').addEventListener('click', async () => {
+    await dbPut('dailyReflections', {
+      id: existing ? existing.id : uid(), date: iso,
+      accomplished: document.getElementById('r1').value, learned: document.getElementById('r2').value,
+      difficult: document.getElementById('r3').value, improve: document.getElementById('r4').value,
+      tomorrow: document.getElementById('r5').value, createdAt: nowISO()
+    });
+    toast('Reflection saved.'); renderReflection();
+  });
+}
+
+async function renderWeeklyReflection() {
+  const body = document.getElementById('reflection-body');
+  const weekDates = currentWeekDates();
+  const weekKey = weekDates[0];
+  const existing = (await dbGetAll('weeklyReviews')).find(r => r.weekStart === weekKey);
+  const past = (await dbGetAll('weeklyReviews')).sort((a, b) => b.weekStart.localeCompare(a.weekStart)).filter(r => r.weekStart !== weekKey);
+
+  body.innerHTML = `
+    <div class="card">
+      <div class="faint mono" style="font-size:11px;margin-bottom:10px;">Week of ${shortDate(weekDates[0])}</div>
+      <div class="field"><label>Biggest achievement</label><textarea id="w1">${escapeHtml(existing?.achievement || '')}</textarea></div>
+      <div class="field"><label>Biggest weakness</label><textarea id="w2">${escapeHtml(existing?.weakness || '')}</textarea></div>
+      <div class="grid grid-2">
+        <div class="field"><label>Academic progress</label><textarea id="w3">${escapeHtml(existing?.academic || '')}</textarea></div>
+        <div class="field"><label>Physical progress</label><textarea id="w4">${escapeHtml(existing?.physical || '')}</textarea></div>
+        <div class="field"><label>Language progress</label><textarea id="w5">${escapeHtml(existing?.language || '')}</textarea></div>
+        <div class="field"><label>Professional progress</label><textarea id="w6">${escapeHtml(existing?.professional || '')}</textarea></div>
+      </div>
+      <div class="field"><label>What worked?</label><textarea id="w7">${escapeHtml(existing?.worked || '')}</textarea></div>
+      <div class="field"><label>What failed?</label><textarea id="w8">${escapeHtml(existing?.failed || '')}</textarea></div>
+      <div class="field"><label>What should change next week?</label><textarea id="w9">${escapeHtml(existing?.change || '')}</textarea></div>
+      <button class="btn primary" id="save-weekly">${existing ? 'Update' : 'Save'} weekly review</button>
+    </div>
+    <div class="section" style="margin-top:24px;">
+      <div class="section-head"><div class="section-title">Past reviews</div></div>
+      ${past.length ? past.slice(0, 6).map(r => `
+        <div class="card" style="margin-bottom:10px;">
+          <div class="faint mono" style="font-size:11px;margin-bottom:6px;">Week of ${shortDate(r.weekStart)}</div>
+          <div style="font-size:13px;"><strong>Achievement:</strong> ${escapeHtml(r.achievement || '—')}</div>
+          <div style="font-size:13px;"><strong>Change next:</strong> ${escapeHtml(r.change || '—')}</div>
+        </div>`).join('') : '<div class="empty">No past reviews yet.</div>'}
+    </div>
+  `;
+  document.getElementById('save-weekly').addEventListener('click', async () => {
+    await dbPut('weeklyReviews', {
+      id: existing ? existing.id : uid(), weekStart: weekKey,
+      achievement: document.getElementById('w1').value, weakness: document.getElementById('w2').value,
+      academic: document.getElementById('w3').value, physical: document.getElementById('w4').value,
+      language: document.getElementById('w5').value, professional: document.getElementById('w6').value,
+      worked: document.getElementById('w7').value, failed: document.getElementById('w8').value,
+      change: document.getElementById('w9').value, createdAt: nowISO()
+    });
+    toast('Weekly review saved.'); renderReflection();
+  });
+}
+/* ============================================================
+   LEDGER — Settings page (weights, habits, goals, data safety)
+   ============================================================ */
+async function renderSettings() {
+  const container = document.getElementById('page-settings');
+  const weights = await getWeights();
+  const habits = (await dbGetAll('habits')).filter(h => !h.archived);
+  const goals = await dbGetAll('goals');
+
+  container.innerHTML = `
+    <div class="page-head"><div><h1 class="page-title">Settings</h1><div class="page-sub">Weighting, habits, goals, and your data.</div></div></div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Performance weighting</div></div>
+      <div class="card">
+        <p class="muted" style="font-size:13px;margin:0 0 12px;">These weights decide how each domain contributes to your daily/weekly score. They should sum to 100.</p>
+        <div class="grid grid-3">
+          ${Object.keys(weights).map(k => `
+            <div class="field"><label>${k[0].toUpperCase() + k.slice(1)} (%)</label><input type="number" id="w-${k}" value="${weights[k]}" min="0" max="100"></div>
+          `).join('')}
+        </div>
+        <div id="weight-sum" class="faint" style="font-size:12px;margin-bottom:10px;"></div>
+        <button class="btn primary small" id="save-weights">Save weights</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head between"><div class="section-title">Habits <span class="n">(${habits.length})</span></div><button class="btn small" id="btn-add-habit">+ Habit</button></div>
+      <div class="card">
+        ${habits.length ? habits.map(h => `
+          <div class="list-item">
+            <span><span class="pill ${h.frequency === 'daily' ? 'ink' : 'violet'}">${h.frequency}</span> ${escapeHtml(h.name)} <span class="faint">— min: ${escapeHtml(h.minViable)}, ideal: ${escapeHtml(h.idealVersion)}</span></span>
+            <button class="btn ghost small" data-archive-habit="${h.id}">Archive</button>
+          </div>`).join('') : '<div class="empty">No active habits.</div>'}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head between"><div class="section-title">Goals <span class="n">(${goals.length})</span></div><button class="btn small" id="btn-add-goal">+ Goal</button></div>
+      <div class="card">
+        ${goals.length ? goals.map(g => `
+          <div class="list-item">
+            <span>${escapeHtml(g.text)} ${g.targetDate ? `<span class="faint">— by ${shortDate(g.targetDate)}</span>` : ''}</span>
+            <button class="btn ghost small" data-del-goal="${g.id}">✕</button>
+          </div>`).join('') : '<div class="empty">No goals set yet.</div>'}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Data</div></div>
+      <div class="card row wrap" style="gap:10px;">
+        <button class="btn" id="btn-export">Export all data (JSON)</button>
+        <label class="btn" style="position:relative;">Import backup<input type="file" id="import-file" accept="application/json" style="position:absolute;inset:0;opacity:0;cursor:pointer;"></label>
+        <button class="btn danger" id="btn-reset">Reset database</button>
+      </div>
+      <p class="faint" style="font-size:11px;margin-top:8px;">Everything is stored locally in your browser via IndexedDB. Nothing is sent anywhere. Export regularly if you care about not losing it.</p>
+    </div>
+  `;
+
+  const sumEl = document.getElementById('weight-sum');
+  function updateSum() {
+    const sum = Object.keys(weights).reduce((s, k) => s + Number(document.getElementById('w-' + k).value || 0), 0);
+    sumEl.textContent = `Current sum: ${sum}${sum !== 100 ? ' — does not need to be exactly 100; the score is normalized either way.' : ' ✓'}`;
+  }
+  Object.keys(weights).forEach(k => document.getElementById('w-' + k).addEventListener('input', updateSum));
+  updateSum();
+
+  document.getElementById('save-weights').addEventListener('click', async () => {
+    const newWeights = {};
+    Object.keys(weights).forEach(k => newWeights[k] = Number(document.getElementById('w-' + k).value || 0));
+    await dbPut('meta', { key: 'weights', value: newWeights });
+    toast('Weights saved.');
+  });
+
+  document.getElementById('btn-add-habit').addEventListener('click', openHabitModal);
+  container.querySelectorAll('[data-archive-habit]').forEach(b => b.addEventListener('click', async () => {
+    const h = await dbGet('habits', b.dataset.archiveHabit); h.archived = true; await dbPut('habits', h); renderSettings();
+  }));
+  document.getElementById('btn-add-goal').addEventListener('click', openGoalModal);
+  container.querySelectorAll('[data-del-goal]').forEach(b => b.addEventListener('click', async () => {
+    await dbDelete('goals', b.dataset.delGoal); renderSettings();
+  }));
+
+  document.getElementById('btn-export').addEventListener('click', exportAllData);
+  document.getElementById('import-file').addEventListener('change', importDataFile);
+  document.getElementById('btn-reset').addEventListener('click', confirmResetDatabase);
+}
+
+function openHabitModal() {
+  openModal(`
+    <h3>Add habit</h3>
+    <div class="field"><label>Name</label><input id="h-name" placeholder="e.g. Vocabulary review"></div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Category</label>
+        <select id="h-cat"><option value="academic">Academic</option><option value="physical">Physical</option><option value="languages">Languages</option><option value="professional">Professional</option><option value="recovery">Recovery</option></select>
+      </div>
+      <div class="field" style="flex:1;"><label>Frequency</label>
+        <select id="h-freq"><option value="daily">Daily</option><option value="weekly">Weekly</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Minimum viable</label><input id="h-min" placeholder="e.g. 10 min"></div>
+      <div class="field" style="flex:1;"><label>Ideal version</label><input id="h-ideal" placeholder="e.g. 30 min"></div>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-habit">Save</button>
+    </div>
+  `);
+  document.getElementById('save-habit').addEventListener('click', async () => {
+    const name = document.getElementById('h-name').value.trim();
+    if (!name) { toast('Enter a name.', true); return; }
+    await dbPut('habits', {
+      id: uid(), name, category: document.getElementById('h-cat').value, frequency: document.getElementById('h-freq').value,
+      minViable: document.getElementById('h-min').value, idealVersion: document.getElementById('h-ideal').value,
+      target: document.getElementById('h-ideal').value, createdAt: nowISO(), archived: false
+    });
+    closeModal(); toast('Habit added.'); renderSettings();
+  });
+}
+
+function openGoalModal() {
+  openModal(`
+    <h3>Add goal</h3>
+    <div class="field"><label>Goal</label><textarea id="g-text" placeholder="What are you aiming for?"></textarea></div>
+    <div class="field"><label>Target date (optional)</label><input type="date" id="g-date"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="save-goal">Save</button>
+    </div>
+  `);
+  document.getElementById('save-goal').addEventListener('click', async () => {
+    const text = document.getElementById('g-text').value.trim();
+    if (!text) { toast('Enter a goal.', true); return; }
+    await dbPut('goals', { id: uid(), text, targetDate: document.getElementById('g-date').value, createdAt: nowISO() });
+    closeModal(); toast('Goal added.'); renderSettings();
+  });
+}
+
+async function exportAllData() {
+  const data = {};
+  for (const s of STORES) data[s.name] = await dbGetAll(s.name);
+  data.__exportedAt = nowISO();
+  data.__dbVersion = DB_VERSION;
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `ledger-backup-${todayISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported.');
+}
+
+function importDataFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const data = JSON.parse(reader.result);
+      openModal(`
+        <h3>Import backup</h3>
+        <p class="muted" style="font-size:13px;">This will overwrite existing records with matching IDs. Continue?</p>
+        <div class="row" style="justify-content:flex-end;margin-top:12px;">
+          <button class="btn ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn primary" id="confirm-import">Import</button>
+        </div>
+      `);
+      document.getElementById('confirm-import').addEventListener('click', async () => {
+        for (const s of STORES) {
+          if (Array.isArray(data[s.name])) {
+            for (const rec of data[s.name]) await dbPut(s.name, rec);
+          }
+        }
+        closeModal(); toast('Import complete.'); goTo(currentPage);
+      });
+    } catch (err) {
+      toast('Invalid backup file.', true);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function confirmResetDatabase() {
+  openModal(`
+    <h3>Reset database</h3>
+    <p class="muted" style="font-size:13px;">This permanently deletes all local data — habits, training logs, courses, everything. Export a backup first if you want to keep it. This cannot be undone.</p>
+    <div class="row" style="justify-content:flex-end;margin-top:12px;">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn danger" id="confirm-reset">Yes, delete everything</button>
+    </div>
+  `);
+  document.getElementById('confirm-reset').addEventListener('click', async () => {
+    for (const s of STORES) await dbClear(s.name);
+    await seedIfEmpty();
+    closeModal(); toast('Database reset.'); goTo('today');
+  });
+}
+/* ============================================================
+   LEDGER — boot
+   ============================================================ */
+const PAGE_RENDERERS = {
+  today: renderToday,
+  week: renderWeek,
+  training: renderTraining,
+  academic: renderAcademic,
+  languages: renderLanguages,
+  projects: renderProjects,
+  skills: renderSkills,
+  charts: renderCharts,
+  reflection: renderReflection,
+  settings: renderSettings
+};
+
+function buildPageContainers() {
+  const pagesEl = document.getElementById('pages');
+  pagesEl.innerHTML = PAGES.map(p => `<div class="page" id="page-${p.id}"></div>`).join('');
+}
+
+async function boot() {
+  buildPageContainers();
+  try {
+    await openDatabase();
+    await seedIfEmpty();
+    await loadCustomizations();
+  } catch (err) {
+    document.getElementById('pages').innerHTML = `
+      <div class="card" style="border-color:var(--danger);">
+        <strong style="color:var(--danger);">Could not open local database.</strong>
+        <p class="muted" style="font-size:13px;">${escapeHtml(err && err.message ? err.message : String(err))}</p>
+        <p class="muted" style="font-size:13px;">Try opening this file in a different browser, or check that private/incognito mode isn't blocking IndexedDB.</p>
+      </div>`;
+    return;
+  }
+  renderNav();
+  document.getElementById('sidebar-foot').textContent = 'Stored locally · IndexedDB';
+  initRouter();
+}
+
+
+/* ============================================================
+   LEDGER — phone app layer: tab bar, install, reminders
+   ============================================================ */
+(function(){
+  const bar=document.getElementById('tabbar');
+  bar.querySelectorAll('[data-tab-go]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.tabGo)));
+  bar.querySelector('[data-tab-more]').addEventListener('click',openSidebar);
+  const _rn=renderNav;
+  renderNav=function(){_rn();bar.querySelectorAll('[data-tab-go]').forEach(b=>b.classList.toggle('active',b.dataset.tabGo===currentPage));};
+})();
+
+let _installEv=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_installEv=e;});
+
+const REM_DEFAULTS=[
+ {id:'morning',label:'Plan the day',time:'07:30',days:[0,1,2,3,4,5,6],on:true,body:'Open Today and set your top 3. Minimum viable version counts.'},
+ {id:'study',label:'Focus block',time:'15:00',days:[1,2,3,4,5],on:true,body:'Start the ugly 25 minutes. Momentum follows.'},
+ {id:'train',label:'Training',time:'17:30',days:[1,2,3,4,5,6],on:true,body:'Shoes on. Log the session after, even a short one.'},
+ {id:'practice',label:'Practice block',time:'20:00',days:[0,1,2,3,4,5,6],on:true,body:'One focused practice task today.'},
+ {id:'night',label:'Evening reflection',time:'21:45',days:[0,1,2,3,4,5,6],on:true,body:'Log habits and write 3 lines. Then sleep.'}
+];
+async function loadRem(){const r=await dbGet('meta','reminders');return r&&r.items?r:{key:'reminders',items:REM_DEFAULTS.map(x=>({...x})),fired:{}};}
+async function habitsLeft(){
+  const h=(await dbGetAll('habits')).filter(x=>!x.archived&&x.frequency==='daily');
+  const l=(await dbGetAll('habitLogs')).filter(x=>x.date===todayISO());
+  return h.filter(x=>!l.some(y=>y.habitId===x.id)).length;
+}
+const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+const LN=()=>window.Capacitor.Plugins.LocalNotifications;
+async function nativePerm(){try{const p=(await LN().checkPermissions()).display;return p==='granted'?'granted':p==='denied'?'denied':'default';}catch(e){return 'denied';}}
+async function scheduleNative(){
+  try{
+    const ln=LN(),pend=await ln.getPending();
+    if(pend.notifications.length)await ln.cancel({notifications:pend.notifications.map(n=>({id:n.id}))});
+    const rec=await loadRem(),list=[];
+    rec.items.forEach((it,i)=>{if(!it.on)return;const[h,m]=it.time.split(':').map(Number);
+      it.days.forEach(d=>list.push({id:1000+i*10+d,title:it.label,body:it.body,schedule:{on:{weekday:d+1,hour:h,minute:m},allowWhileIdle:true}}));});
+    if(list.length)await ln.schedule({notifications:list});
+  }catch(e){}
+}
+async function fireNote(title,body,tag){
+  if(NATIVE){try{await LN().schedule({notifications:[{id:9999,title,body,schedule:{at:new Date(Date.now()+2000)}}]});return true;}catch(e){return false;}}
+  if(!('Notification' in window)||Notification.permission!=='granted')return false;
+  try{
+    const reg=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration():null;
+    if(reg)await reg.showNotification(title,{body,tag,icon:'icon-192.png',badge:'icon-192.png',data:{url:'./#today'}});
+    else new Notification(title,{body,tag});
+    return true;
+  }catch(e){return false;}
+}
+async function checkReminders(){
+  if(NATIVE)return;
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const rec=await loadRem(),now=new Date(),iso=todayISO(),mins=now.getHours()*60+now.getMinutes();
+  rec.fired=rec.fired||{};let ch=false;
+  for(const it of rec.items){
+    if(!it.on||!it.days.includes(now.getDay())||rec.fired[it.id]===iso)continue;
+    const[h,m]=it.time.split(':').map(Number),t=h*60+m;
+    if(mins>=t&&mins-t<=90){
+      let body=it.body;
+      if(it.id==='night'){const n=await habitsLeft();if(n>0)body+=` ${n} daily habit${n>1?'s':''} still open.`;}
+      if(await fireNote(it.label,body,it.id)){rec.fired[it.id]=iso;ch=true;}
+    }
+  }
+  if(ch)await dbPut('meta',rec);
+}
+async function addReminderCard(){
+  const c=document.getElementById('page-settings');if(!c||c.querySelector('#rem-card'))return;
+  const rec=await loadRem(),perm=NATIVE?await nativePerm():(('Notification' in window)?Notification.permission:'unsupported');
+  const ios=/iphone|ipad/i.test(navigator.userAgent),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const html=`<div class="section" id="rem-card"><div class="section-head"><div class="section-title">Reminders &amp; phone app</div></div><div class="card">
+    <p class="muted" style="font-size:13px;margin:0 0 12px;">${perm==='granted'?'Notifications are on.':perm==='denied'?'Notifications are blocked. Enable them in your browser or phone settings for this app.':perm==='unsupported'?'This browser does not support notifications.':'Turn on notifications to get your reminders.'}
+    ${ios&&!standalone?' On iPhone: tap Share, then Add to Home Screen, then open Ledger from the home screen. Notifications only work from there.':''}</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      ${perm==='default'?'<button class="btn primary small" id="rem-perm">Enable notifications</button>':''}
+      ${perm==='granted'?'<button class="btn small" id="rem-test">Send test</button>':''}
+      ${_installEv?'<button class="btn small" id="rem-install">Install app</button>':''}
+    </div>
+    ${rec.items.map(it=>`<div class="rem-row"><input type="checkbox" data-rem-on="${it.id}" ${it.on?'checked':''}>
+      <div><input data-rem-label="${it.id}" value="${escapeHtml(it.label)}" style="width:100%;"><div class="faint" style="font-size:12px;">${it.days.length===7?'Every day':it.days.map(d=>days[d]).join(' ')}</div></div>
+      <input type="time" data-rem-time="${it.id}" value="${it.time}"><button class="btn ghost small" data-rem-del="${it.id}">✕</button></div>`).join('')}
+    <button class="btn small" id="rem-add" style="margin-top:10px;">+ Add reminder</button>
+    <p class="faint" style="font-size:12px;margin:10px 0 0;">${NATIVE?'Reminders are scheduled on your phone and fire even when the app is closed.':'Reminders fire when Ledger is open or was recently used. For the most reliable alerts, install it and keep notifications allowed.'}</p>
+  </div></div>`;
+  if(c.querySelector('#rem-card'))return;
+  const head=c.querySelector('.page-head');
+  head?head.insertAdjacentHTML('afterend',html):c.insertAdjacentHTML('afterbegin',html);
+  const q=s=>c.querySelector(s);
+  q('#rem-perm')&&q('#rem-perm').addEventListener('click',async()=>{if(NATIVE){await LN().requestPermissions();await scheduleNative();}else await Notification.requestPermission();c.querySelector('#rem-card').remove();addReminderCard();checkReminders();});
+  q('#rem-test')&&q('#rem-test').addEventListener('click',()=>fireNote('Ledger','Notifications work. Now go do the first thing.','test'));
+  q('#rem-install')&&q('#rem-install').addEventListener('click',async()=>{_installEv.prompt();await _installEv.userChoice;_installEv=null;c.querySelector('#rem-card').remove();addReminderCard();});
+  c.querySelectorAll('[data-rem-on]').forEach(el=>el.addEventListener('change',async()=>{const r=await loadRem();r.items.find(i=>i.id===el.dataset.remOn).on=el.checked;await dbPut('meta',r);if(NATIVE)scheduleNative();toast('Saved');}));
+  c.querySelectorAll('[data-rem-time]').forEach(el=>el.addEventListener('change',async()=>{const r=await loadRem();const it=r.items.find(i=>i.id===el.dataset.remTime);it.time=el.value;delete r.fired[it.id];await dbPut('meta',r);if(NATIVE)scheduleNative();toast('Saved');}));
+  const redo = async () => { const x = c.querySelector('#rem-card'); if (x) x.remove(); await addReminderCard(); if (NATIVE) scheduleNative(); };
+  c.querySelectorAll('[data-rem-label]').forEach(el => el.addEventListener('change', async () => { const r = await loadRem(); r.items.find(i => i.id === el.dataset.remLabel).label = el.value || 'Reminder'; await dbPut('meta', r); if (NATIVE) scheduleNative(); toast('Saved'); }));
+  c.querySelectorAll('[data-rem-del]').forEach(el => el.addEventListener('click', async () => { const r = await loadRem(); r.items = r.items.filter(i => i.id !== el.dataset.remDel); await dbPut('meta', r); redo(); }));
+  const addR = c.querySelector('#rem-add'); if (addR) addR.addEventListener('click', async () => { const r = await loadRem(); r.items.push({ id: uid(), label: 'New reminder', time: '09:00', days: [0,1,2,3,4,5,6], on: true, body: 'Time to check in with your plan.' }); await dbPut('meta', r); redo(); });
+}
+const _rsOrig=PAGE_RENDERERS.settings;
+PAGE_RENDERERS.settings=async()=>{await _rsOrig();await addReminderCard();await addSettingsExtras();};
+
+async function startPhoneLayer(){
+  if(NATIVE){if(await nativePerm()==='granted')scheduleNative();return;}
+  if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
+    try{
+      const reg=await navigator.serviceWorker.register('sw.js');
+      const ready=await navigator.serviceWorker.ready;
+      if(ready.periodicSync){try{await ready.periodicSync.register('ledger-reminders',{minInterval:3600000});}catch(e){}}
+    }catch(e){}
+  }
+  checkReminders();
+  setInterval(checkReminders,30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders();});
+}
+
+
+/* ============================================================
+   LEDGER — make it yours: plan, schedule, program, prompts, habits
+   ============================================================ */
+const TRAIN_OPTS = { gym: 'Gym / strength', run: 'Run', long_run: 'Long run', recovery: 'Recovery / mobility', rest: 'Rest', other: 'Other activity' };
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const optHtml = (o, sel) => Object.entries(o).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v}</option>`).join('');
+
+async function loadCustomizations() {
+  const plan = await getMeta('plan', null); if (plan) Object.assign(DAY_PLAN, plan);
+  const sp = await getMeta('split', null);
+  if (sp && Object.keys(sp).length) { Object.keys(STRENGTH_SPLIT).forEach(k => delete STRENGTH_SPLIT[k]); Object.assign(STRENGTH_SPLIT, sp); }
+}
+
+function openHabitEdit(h) {
+  const cats = ['academic', 'physical', 'languages', 'professional', 'recovery'];
+  openModal(`<h3>Edit habit</h3>
+    <div class="field"><label>Name</label><input id="eh-name" value="${escapeHtml(h.name)}"></div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Category</label><select id="eh-cat">${cats.map(c => `<option value="${c}" ${h.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      <div class="field" style="flex:1;"><label>Frequency</label><select id="eh-freq"><option value="daily" ${h.frequency === 'daily' ? 'selected' : ''}>Daily</option><option value="weekly" ${h.frequency === 'weekly' ? 'selected' : ''}>Weekly</option></select></div>
+    </div>
+    <div class="row">
+      <div class="field" style="flex:1;"><label>Minimum viable</label><input id="eh-min" value="${escapeHtml(h.minViable || '')}"></div>
+      <div class="field" style="flex:1;"><label>Ideal version</label><input id="eh-ideal" value="${escapeHtml(h.idealVersion || '')}"></div>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" id="eh-save">Save</button></div>`);
+  document.getElementById('eh-save').addEventListener('click', async () => {
+    const name = document.getElementById('eh-name').value.trim(); if (!name) { toast('Enter a name.', true); return; }
+    Object.assign(h, { name, category: document.getElementById('eh-cat').value, frequency: document.getElementById('eh-freq').value, minViable: document.getElementById('eh-min').value, idealVersion: document.getElementById('eh-ideal').value, target: document.getElementById('eh-ideal').value });
+    await dbPut('habits', h); closeModal(); toast('Saved.'); renderSettings().then(() => addSettingsExtras());
+  });
+}
+
+async function addSettingsExtras() {
+  const c = document.getElementById('page-settings'); if (!c || c.querySelector('#setup-card')) return;
+  const [user, events, P, habits] = await Promise.all([getMeta('user', ''), getMeta('events', []), getPrompts(), dbGetAll('habits')]);
+  if (c.querySelector('#setup-card')) return;
+  const evs = events.slice().sort((a, b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || (a.time || '').localeCompare(b.time || ''));
+  const html = `<div id="setup-card">
+    <div class="section"><div class="section-head"><div class="section-title">Your name</div></div><div class="card"><div class="row"><input id="set-name" value="${escapeHtml(user)}" placeholder="Your name" style="flex:1;"><button class="btn primary small" id="save-name">Save</button></div></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">Weekly plan</div></div><div class="card">
+      <p class="muted" style="font-size:13px;margin:0 0 6px;">What you plan to do each day. Change it any time.</p>
+      ${DAYS.map(d => `<div class="plan-row"><strong>${d}</strong>
+        <select data-plan-train="${d}">${optHtml(TRAIN_OPTS, DAY_PLAN[d].training)}</select>
+        <select data-plan-int="${d}">${optHtml({ light: 'Light', moderate: 'Moderate', hard: 'Hard' }, DAY_PLAN[d].intensity)}</select>
+        <input class="note" data-plan-note="${d}" value="${escapeHtml(DAY_PLAN[d].note)}" placeholder="Note for the day"></div>`).join('')}
+      <button class="btn primary small" id="save-plan" style="margin-top:10px;">Save plan</button></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">Weekly schedule <span class="n">(${events.length})</span></div></div><div class="card">
+      <p class="muted" style="font-size:13px;margin:0 0 8px;">Work, classes, practice, anything with a time. Shows on Today and This Week.</p>
+      ${evs.map(e => `<div class="list-item"><span><span class="pill ink">${e.day.slice(0, 3)}</span> ${escapeHtml(e.time || '')} ${escapeHtml(e.title)}</span><button class="btn ghost small" data-del-event="${e.id}">✕</button></div>`).join('')}
+      <div class="plan-row" style="border:0;"><select id="ev-day">${DAYS.map(d => `<option>${d}</option>`).join('')}</select><input id="ev-time" type="time"><input class="note" id="ev-title" placeholder="What is it? e.g. Work shift"></div>
+      <button class="btn small" id="add-event">+ Add to schedule</button></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">Strength program</div></div><div class="card">
+      <p class="muted" style="font-size:13px;margin:0 0 8px;">Up to four workouts. One exercise per line. Leave a name empty to remove it.</p>
+      ${['A', 'B', 'C', 'D'].map(k => `<div class="field"><label>Workout ${k}</label><input data-split-label="${k}" value="${escapeHtml(STRENGTH_SPLIT[k] ? STRENGTH_SPLIT[k].label : '')}" placeholder="Name, e.g. Upper body"><textarea data-split-ex="${k}" placeholder="Exercises, one per line">${escapeHtml(STRENGTH_SPLIT[k] ? STRENGTH_SPLIT[k].exercises.join('\n') : '')}</textarea></div>`).join('')}
+      <button class="btn primary small" id="save-split">Save program</button></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">Reflection questions</div></div><div class="card">
+      ${P.map((q, i) => `<div class="field"><label>Question ${i + 1}</label><input data-prompt="${i}" value="${escapeHtml(q)}"></div>`).join('')}
+      <button class="btn primary small" id="save-prompts">Save questions</button></div></div></div>`;
+  const anchor = c.querySelector('#rem-card');
+  if (anchor) anchor.insertAdjacentHTML('afterend', html); else c.insertAdjacentHTML('afterbegin', html);
+  const q = s => c.querySelector(s), again = () => renderSettings().then(() => { return PAGE_RENDERERS.settings ? addReminderCard().then(addSettingsExtras) : 0; });
+
+  q('#save-name').addEventListener('click', async () => { await setMeta('user', q('#set-name').value.trim()); toast('Saved'); });
+  q('#save-plan').addEventListener('click', async () => {
+    DAYS.forEach(d => { DAY_PLAN[d] = { training: q(`[data-plan-train="${d}"]`).value, intensity: q(`[data-plan-int="${d}"]`).value, note: q(`[data-plan-note="${d}"]`).value }; });
+    await setMeta('plan', DAY_PLAN); toast('Plan saved');
+  });
+  q('#add-event').addEventListener('click', async () => {
+    const title = q('#ev-title').value.trim(); if (!title) { toast('Enter what it is.', true); return; }
+    const list = await getMeta('events', []); list.push({ id: uid(), day: q('#ev-day').value, time: q('#ev-time').value, title });
+    await setMeta('events', list); again();
+  });
+  c.querySelectorAll('[data-del-event]').forEach(b => b.addEventListener('click', async () => { await setMeta('events', (await getMeta('events', [])).filter(e => e.id !== b.dataset.delEvent)); again(); }));
+  q('#save-split').addEventListener('click', async () => {
+    const sp = {};
+    ['A', 'B', 'C', 'D'].forEach(k => { const label = q(`[data-split-label="${k}"]`).value.trim(); if (label) sp[k] = { label, exercises: q(`[data-split-ex="${k}"]`).value.split('\n').map(x => x.trim()).filter(Boolean) }; });
+    if (!Object.keys(sp).length) { toast('Keep at least one workout.', true); return; }
+    Object.keys(STRENGTH_SPLIT).forEach(k => delete STRENGTH_SPLIT[k]); Object.assign(STRENGTH_SPLIT, sp);
+    await setMeta('split', sp); toast('Program saved');
+  });
+  q('#save-prompts').addEventListener('click', async () => { await setMeta('prompts', [...c.querySelectorAll('[data-prompt]')].map(i => i.value.trim() || 'Question')); toast('Saved'); });
+
+  c.querySelectorAll('[data-archive-habit]').forEach(b => {
+    if (b.parentNode.dataset && b.parentNode.dataset.habitWrap) return;
+    const w = document.createElement('span'); w.className = 'row'; w.style.gap = '6px'; w.dataset.habitWrap = '1';
+    const e = document.createElement('button'); e.className = 'btn ghost small'; e.textContent = 'Edit';
+    e.addEventListener('click', () => openHabitEdit(habits.find(h => h.id === b.dataset.archiveHabit)));
+    b.parentNode.insertBefore(w, b); w.appendChild(e); w.appendChild(b);
+  });
+}
+
+function startClock() {
+  const tick = () => {
+    document.querySelectorAll('#live-clock').forEach(e => e.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    if (window.__day && window.__day !== todayISO() && currentPage === 'today') renderToday();
+  };
+  tick(); setInterval(tick, 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+}
+
+async function maybeWelcome() {
+  if ((await getMeta('user', null)) !== null) return;
+  openModal(`<h3>Welcome to Ledger</h3>
+    <p class="muted" style="font-size:13px;margin:0 0 12px;">Your personal system for the things you choose to track. Start with your own activities and schedule — nothing is preselected, and you can shape Ledger whenever you need.</p>
+    <div class="field"><label>What should I call you?</label><input id="wl-name" placeholder="Your name"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn primary" id="wl-go">Get started</button></div>`);
+  document.getElementById('wl-go').addEventListener('click', async () => { await setMeta('user', document.getElementById('wl-name').value.trim()); closeModal(); if (currentPage === 'today') renderToday(); });
+}
+
+boot().then(() => { startPhoneLayer(); startClock(); maybeWelcome(); });
+
+
+</script>
+</body>
+</html>
