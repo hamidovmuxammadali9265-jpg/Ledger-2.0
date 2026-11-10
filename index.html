@@ -27,36 +27,35 @@
   src: local('Fraunces');
 }
 :root {
-  /* LEDGER / OBSIDIAN DESIGN SYSTEM */
   --bg: #090B0F;
-  --bg-raised: #11151B;
-  --bg-inset: #0D1015;
+  --bg-raised: #171B22;
+  --bg-inset: #0d1015;
   --line: #292F38;
-  --line-soft: #1D232C;
+  --line-soft: #20252d;
   --text: #F5F7FA;
-  --text-dim: #A5AFBA;
-  --text-faint: #697481;
+  --text-dim: #B7BFC9;
+  --text-faint: #858D98;
 
-  --track: #E10600;
-  --track-dim: #64201F;
-  --ink: #DCE3EA;
-  --ink-dim: #424B56;
-  --signal: #AEB8C3;
-  --signal-dim: #3A424C;
-  --amber: #C2CBD4;
-  --amber-dim: #414A54;
-  --violet: #929EAB;
-  --violet-dim: #39424D;
+  --track: #E10600;      /* physical / training */
+  --track-dim: #5a0f0c;
+  --ink: #DCE3EA;         /* academic */
+  --ink-dim: #3a4350;
+  --signal: #F5F7FA;      /* languages */
+  --signal-dim: #4a525c;
+  --amber: #A9B1BC;       /* projects / professional */
+  --amber-dim: #4a525c;
+  --violet: #858D98;      /* recovery / discipline */
+  --violet-dim: #3a4350;
 
-  --danger: #FF514B;
-  --good: #DCE3EA;
+  --danger: #FF4D43;
+  --good: #F5F7FA;
 
-  --radius-s: 7px;
+  --radius-s: 6px;
   --radius-m: 12px;
 
-  --serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --serif: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -380,7 +379,7 @@ textarea { resize: vertical; min-height: 70px; }
   body{padding-top:env(safe-area-inset-top);-webkit-tap-highlight-color:transparent}
   #pages{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   #tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;
-    background:rgba(27,30,35,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    background:rgba(9,11,15,.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
     border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
   #tabbar button{background:none;border:0;color:var(--text-faint);font-family:inherit;font-size:10.5px;font-weight:600;line-height:1;letter-spacing:.3px;
     padding:6px 0 4px;min-height:50px;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;transition:color .15s}
@@ -399,138 +398,94 @@ textarea { resize: vertical; min-height: 70px; }
 .rem-row input[type=time]{width:auto;min-width:96px}
 .rem-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--track)}
 
-.tick{width:30px;height:30px;min-width:30px;border-radius:50%;border:2px solid var(--line);background:transparent;color:#0f1114;font-size:16px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;margin-right:12px;cursor:pointer}
+.tick{width:30px;height:30px;min-width:30px;border-radius:50%;border:2px solid var(--line);background:transparent;color:#0d1015;font-size:16px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;margin-right:12px;cursor:pointer}
 .tick.on{background:var(--signal);border-color:var(--signal)}
 .todo-main{display:flex;align-items:center;flex:1;min-width:0}
 .is-done .todo-text{text-decoration:line-through;color:var(--text-faint)}
 .plan-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
 .plan-row strong,.plan-row .note{grid-column:1/-1}
 
-/* ============================================================
-   LEDGER 2.0 — OBSIDIAN / ICE / RACING RED
-   Progressive visual layer: keeps the existing UI and data model.
-   ============================================================ */
-:root { color-scheme: dark; }
-body {
-  background:
-    radial-gradient(ellipse at 82% -18%, rgba(225,6,0,.075), transparent 38%),
-    var(--bg);
-  letter-spacing: -.012em;
-}
-#sidebar {
-  background: rgba(13,16,21,.96);
-  border-right-color: var(--line-soft);
-  padding-top: 24px;
-}
-.brand {
-  font-family: var(--sans);
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-.brand::after {
-  content: "YOUR LIFE. YOUR SYSTEM.";
-  display: block;
-  position: absolute;
-  top: 55px;
-  left: 20px;
-  color: var(--text-faint);
-  font: 600 8px/1 var(--sans);
-  letter-spacing: .16em;
-}
-.brand { position: relative; padding-bottom: 28px; }
-.nav-group { margin-top: 18px; }
-.nav-label { text-transform: uppercase; letter-spacing: .14em; font-weight: 700; }
-.nav-item {
-  margin: 2px 10px;
-  width: calc(100% - 20px);
-  border-left: 0;
-  border-radius: 8px;
-  padding: 10px 12px;
-  transition: background .18s ease, color .18s ease, transform .18s ease;
-}
-.nav-item:hover { transform: translateX(2px); background: #171D25; }
-.nav-item.active {
-  color: var(--text);
-  background: linear-gradient(90deg, rgba(225,6,0,.16), rgba(225,6,0,.035));
-  box-shadow: inset 2px 0 0 var(--track);
-}
-.nav-item.active .nav-dot { background: var(--track) !important; box-shadow: 0 0 10px rgba(225,6,0,.55); }
-#main { max-width: 1280px; padding-top: 30px; }
-.page-title { font-family: var(--sans); font-weight: 750; letter-spacing: -.045em; }
-.page-sub { color: var(--text-dim); }
-.page.active { animation: ledger-page-in .28s cubic-bezier(.2,.75,.25,1) both; }
-@keyframes ledger-page-in {
-  from { opacity: 0; transform: translateY(7px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.card {
-  background: linear-gradient(145deg, rgba(20,25,33,.98), rgba(15,19,25,.98));
-  border-color: var(--line-soft);
-  border-radius: 12px;
-  box-shadow: 0 8px 28px rgba(0,0,0,.12);
-  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
-}
-.card:hover { border-color: #3A424D; box-shadow: 0 12px 34px rgba(0,0,0,.2); }
-.section-head { border-bottom-color: var(--line-soft); }
-.section-title { text-transform: uppercase; letter-spacing: .09em; font-size: 11px; font-weight: 750; }
-.btn {
-  border-radius: 8px;
-  min-height: 36px;
-  transition: transform .15s ease, filter .15s ease, background .15s ease, border-color .15s ease;
-}
-.btn:active { transform: scale(.97); }
-.btn.primary {
-  background: var(--track);
-  border-color: var(--track);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(225,6,0,.18);
-}
-.btn.primary:hover { filter: brightness(1.12); }
-input, select, textarea {
-  background: #0B0F14;
-  border-color: #303844;
-  border-radius: 8px;
-}
-input:focus, select:focus, textarea:focus, button:focus-visible {
-  outline-color: rgba(225,6,0,.8);
-}
-.pill { border-radius: 6px; }
-.stat-num { font-family: var(--mono); font-weight: 700; letter-spacing: -.05em; }
-.bar-track { background: #080B0F; height: 7px; border-radius: 99px; }
-.bar-fill { border-radius: 99px; }
-.modal-overlay { background: rgba(3,5,8,.82); backdrop-filter: blur(8px); }
-.modal {
-  background: #11161D;
-  border-color: #343D48;
-  border-radius: 14px;
-  box-shadow: 0 24px 80px rgba(0,0,0,.5);
-  animation: ledger-modal-in .2s ease both;
-}
-@keyframes ledger-modal-in {
-  from { opacity: 0; transform: translateY(10px) scale(.985); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.toast { border-radius: 9px; border-left-color: var(--track); }
-#tabbar { background: rgba(9,11,15,.92) !important; border-top-color: var(--line-soft) !important; }
-#tabbar button.active { color: var(--text) !important; }
-#tabbar button.active::before { background: var(--track) !important; box-shadow: 0 0 12px rgba(225,6,0,.45); }
-#tabbar button { transition: color .18s ease, transform .18s ease; }
-#tabbar button:active { transform: scale(.94); }
-.sidebar-foot { letter-spacing: .04em; }
-@media (max-width: 860px) {
-  #main { padding: 16px 14px calc(96px + env(safe-area-inset-bottom)); }
-  .page-title { font-size: 25px; }
-  .card { border-radius: 11px; }
-  .modal { max-height: calc(88vh - env(safe-area-inset-top)); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .page.active, .modal { animation: none !important; }
-  .card, .btn, .nav-item, #tabbar button { transition: none !important; }
-}
+/* ---- PREMIUM MINIMALISM: Obsidian / Ice / Racing Red ---- */
+body{letter-spacing:.005em}
+.page-title{font-weight:700;letter-spacing:-.03em}
+.page-sub,.stat-label{color:var(--text-dim)}
+.section-title{text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--text-faint);font-weight:600}
+.card{background:var(--bg-raised);border:1px solid var(--line);border-radius:14px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:#3a424d}
+.stat{border-left:2px solid var(--track)}
+.stat-num{font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.btn{border-radius:10px;transition:transform .12s ease,background .15s,border-color .15s}
+.btn:active{transform:scale(.95)}
+.btn.primary{background:var(--track);border-color:var(--track);color:#fff;font-weight:600}
+.btn.primary:hover{background:#f01a0f}
+.big-clock{font-family:var(--mono);font-size:44px;font-weight:600;letter-spacing:-.04em;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums}
+.tick.on{background:var(--track);border-color:var(--track);color:#fff}
+.tick.pop{animation:pop .26s ease}
+@keyframes pop{50%{transform:scale(1.28)}}
+.page.active{animation:fadeUp .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.bar-fill{animation:grow .9s cubic-bezier(.2,.8,.2,1)}
+@keyframes grow{from{width:0}}
+.modal{animation:fadeUp .25s ease}
+#tabbar button.active::before{background:var(--track);box-shadow:0 0 12px rgba(225,6,0,.6)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+.act-in{width:76px;min-height:38px;text-align:center}
+:focus-visible{outline:2px solid var(--track);outline-offset:2px}
+.tick{position:relative}.tick::after{content:"";position:absolute;inset:-8px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:520px){.grid-3 .stat-num{font-size:20px}}
+
+.hcard{background:var(--bg-raised);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;transition:transform .18s,border-color .2s}
+.hcard:active{transform:scale(.988)}
+.hhead{display:flex;align-items:center;gap:12px;margin-bottom:12px;cursor:pointer}
+.hico{width:40px;height:40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.hico.big{width:48px;height:48px;font-size:24px}
+.hname{flex:1;min-width:0;font-weight:600;font-size:15px}.hsub{font-size:11px;color:var(--text-faint);font-weight:400;margin-top:2px}
+.hstreak{font-size:13px;font-weight:600;color:var(--text-dim);white-space:nowrap}
+.tick.big{width:40px;height:40px;min-width:40px;margin:0;font-size:20px}
+.hgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);grid-auto-columns:13px;gap:3px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.hgrid::-webkit-scrollbar{display:none}
+.cell{width:13px;height:13px;border-radius:4px;background:#20252d;border:0;padding:0;position:relative;transition:transform .12s,background .2s}
+.cell::after{content:"";position:absolute;inset:-2px}
+.cell.on{background:var(--c)}.cell.part{background:var(--c);opacity:.45}.cell.fut{opacity:.22}.cell.tdy{box-shadow:0 0 0 1.5px var(--c)}
+.cell:active{transform:scale(1.5)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;scrollbar-width:none}
+.chip{background:var(--bg-raised);border:1px solid var(--line);color:var(--text-dim);border-radius:99px;padding:8px 16px;font:inherit;font-size:13px;white-space:nowrap;transition:all .2s}
+.chip.on{background:var(--text);color:#090B0F;border-color:var(--text);font-weight:600}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid transparent;padding:0;transition:transform .15s}
+.swatch.sel{border-color:#fff;transform:scale(1.15)}
+.mini{background:var(--bg-inset);border-radius:12px;padding:10px 4px;text-align:center}.mini b{display:block;font-size:19px}.mini span{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em}
+.wdbars{display:flex;gap:8px;align-items:flex-end}.wdbars>div{flex:1;text-align:center}.wdbars span{font-size:10px;color:var(--text-faint)}
+.wdb{height:64px;background:var(--bg-inset);border-radius:6px;display:flex;align-items:flex-end;overflow:hidden;margin-bottom:4px}
+.wdb i{display:block;width:100%;background:var(--c,#E10600);border-radius:6px 6px 0 0;animation:grow2 .8s cubic-bezier(.2,.9,.25,1) both}
+@keyframes grow2{from{height:0!important}}
+.bdot{position:fixed;width:7px;height:7px;border-radius:50%;pointer-events:none;z-index:300}
+.ringc{animation:ring 1.1s cubic-bezier(.2,.9,.25,1) both}
+@keyframes ring{from{stroke-dasharray:0 276.46}}
+.draw{stroke-dasharray:1000;stroke-dashoffset:1000;animation:drawl 1.3s cubic-bezier(.3,.7,.2,1) .2s forwards}
+@keyframes drawl{to{stroke-dashoffset:0}}
+#fab{position:fixed;right:18px;bottom:calc(86px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;background:var(--track);color:#fff;font-size:32px;font-weight:300;line-height:1;border:0;box-shadow:0 10px 30px rgba(225,6,0,.5);z-index:45;transition:transform .15s;animation:pop .4s cubic-bezier(.2,.9,.25,1) both}
+#fab:active{transform:scale(.88) rotate(90deg)}
+@media (min-width:861px){#fab{bottom:28px}}
+.page.active{animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+body[data-nav] .page.active>*:nth-child(1){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:50ms}
+body[data-nav] .page.active>*:nth-child(2){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:100ms}
+body[data-nav] .page.active>*:nth-child(3){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:150ms}
+body[data-nav] .page.active>*:nth-child(4){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:200ms}
+body[data-nav] .page.active>*:nth-child(5){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:250ms}
+body[data-nav] .page.active>*:nth-child(6){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:300ms}
+body[data-nav] .page.active>*:nth-child(7){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:350ms}
+body[data-nav] .page.active>*:nth-child(8){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:400ms}
+body[data-nav] .page.active>*:nth-child(9){animation:rise .55s cubic-bezier(.2,.9,.25,1) both;animation-delay:450ms}
+@media (max-width:860px){
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{width:100%;max-width:none;border-radius:24px 24px 0 0;max-height:90vh;overflow:auto;padding-bottom:calc(24px + env(safe-area-inset-bottom));animation:sheet .36s cubic-bezier(.2,.9,.25,1)}
+  .modal::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:var(--line);margin:-10px auto 14px}
+}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}
 </style>
 </head>
 <body>
@@ -553,7 +508,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible {
 <div class="toast-wrap" id="toast-wrap"></div>
 <script>
 /* ============================================================
-   LEDGER 2.0 — core: constants, db layer, utilities
+   LEDGER — core: constants, db layer, utilities
    ============================================================ */
 const DB_NAME = 'ledger_os';
 const DB_VERSION = 1;
@@ -742,9 +697,23 @@ const STRENGTH_SPLIT = {
 async function seedIfEmpty() {
   if (await dbGet('meta', 'weights')) return;
 
-  // Fresh installs start with an empty activity list.
-  // Users create the routines and activities that fit their own lives.
-  // Existing installations keep all previously stored habits untouched.
+  // starter habits
+  const habitDefs = [
+    { name: 'Read / learn something', category: 'academic', frequency: 'daily', min: '20 min', ideal: '45 min' },
+    { name: 'Move your body', category: 'physical', frequency: 'daily', min: '10 min walk', ideal: '30 min' },
+    { name: 'Sleep logged', category: 'recovery', frequency: 'daily', min: 'logged', ideal: '7h+' },
+    { name: 'One focused work block', category: 'academic', frequency: 'daily', min: '25 min', ideal: '60 min' },
+    { name: 'Strength session', category: 'physical', frequency: 'weekly', min: '1x', ideal: '3x/week' },
+    { name: 'Run', category: 'physical', frequency: 'weekly', min: '1x', ideal: '2–3x/week' },
+    { name: 'Deep work / project block', category: 'professional', frequency: 'weekly', min: '1x', ideal: '1x, 60+ min' }
+  ];
+  for (const h of habitDefs) {
+    await dbPut('habits', {
+      id: uid(), name: h.name, category: h.category, frequency: h.frequency,
+      target: h.ideal, minViable: h.min, idealVersion: h.ideal,
+      createdAt: nowISO(), archived: false
+    });
+  }
 
   // skill tree entries
   for (const group of Object.keys(SKILL_TREE)) {
@@ -821,6 +790,16 @@ window.addEventListener('hashchange', () => {
 /* ============================================================
    LEDGER — Today page
    ============================================================ */
+function greeting(name) {
+  const h = new Date().getHours(), g = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  return name ? `${g}, ${escapeHtml(name)}` : g;
+}
+function countTo(el, from, to) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || from === to) { el.textContent = to + '%'; return; }
+  const t0 = performance.now(), dur = 650;
+  const f = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e) + '%'; if (k < 1) requestAnimationFrame(f); };
+  requestAnimationFrame(f);
+}
 async function getMeta(k, def) { const r = await dbGet('meta', k); return r && r.value !== undefined ? r.value : def; }
 async function setMeta(k, v) { await dbPut('meta', { key: k, value: v }); }
 
@@ -871,8 +850,9 @@ async function renderToday() {
   container.innerHTML = `
     <div class="page-head">
       <div>
+        <div class="big-clock" id="live-clock"></div>
         <h1 class="page-title">${dName}</h1>
-        <div class="page-sub">${user ? 'Hi ' + escapeHtml(user) + ' · ' : ''}${shortDate(iso)} · <span id="live-clock"></span> · ${escapeHtml(plan.note)}</div>
+        <div class="page-sub">${greeting(user)} · ${shortDate(iso)} · ${escapeHtml(plan.note)}</div>
       </div>
       <div class="stat ink" style="text-align:right;"><div class="stat-num">${score}%</div><div class="stat-label">today's weighted score</div></div>
     </div>
@@ -916,10 +896,13 @@ async function renderToday() {
   document.getElementById('new-task').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
   container.onclick = async (e) => {
     const t = e.target.closest('[data-todo]');
-    if (t) { await toggleTodo(t.dataset.todo, t.dataset.kind, t.dataset.id, iso); renderToday(); return; }
+    if (t) { t.classList.add('pop'); await toggleTodo(t.dataset.todo, t.dataset.kind, t.dataset.id, iso); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) await new Promise(r => setTimeout(r, 170)); renderToday(); return; }
     const d = e.target.closest('[data-del-task]');
     if (d) { const list = (await getMeta('tasks', [])).filter(x => x.id !== d.dataset.delTask); await setMeta('tasks', list); renderToday(); }
   };
+  const ah = await actsTodayHtml(iso);
+  if (ah && !container.querySelector('[data-acts-sec]')) { const f = container.querySelector('.section'); if (f) f.insertAdjacentHTML('afterend', ah); }
+  const sn = container.querySelector('.stat-num'); if (sn) countTo(sn, window.__lastScore || 0, score); window.__lastScore = score;
   const clk = document.getElementById('live-clock'); if (clk) clk.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
@@ -1835,6 +1818,10 @@ async function collectActivityDates() {
   all.flat().forEach(rec => {
     if (rec.date) dates[rec.date] = (dates[rec.date] || 0) + 1;
   });
+  (await dbGetAll('meta')).forEach(m => {
+    if (m.key && m.key.startsWith('alog-')) { const n = Object.keys(m.value || {}).length; if (n) dates[m.key.slice(5)] = (dates[m.key.slice(5)] || 0) + n; }
+    else if (m.key && m.key.startsWith('focus-') && m.value > 0) dates[m.key.slice(6)] = (dates[m.key.slice(6)] || 0) + 1;
+  });
   return dates;
 }
 
@@ -1858,20 +1845,21 @@ async function drawHeatmap() {
   const gap = 3;
   const startOffset = -(weeks * 7 - 1);
 
-  ctx.clearRect(0, 0, w, h);
-  for (let week = 0; week < weeks; week++) {
-    for (let d = 0; d < 7; d++) {
-      const dayIndex = startOffset + week * 7 + d;
-      const iso = todayISO(dayIndex);
-      const count = dates[iso] || 0;
-      const intensity = clamp(count / 4, 0, 1);
-      ctx.fillStyle = count === 0 ? '#22252b' : mixColor('#123a2c', '#35c98d', intensity);
-      const x = 10 + week * (cell + gap);
-      const y = 10 + d * (cell + gap);
-      roundRect(ctx, x, y, cell, cell, 2);
-      ctx.fill();
+  const draw = (upTo) => {
+    ctx.clearRect(0, 0, w, h);
+    for (let week = 0; week < weeks; week++) {
+      for (let d = 0; d < 7; d++) {
+        const iso = todayISO(startOffset + week * 7 + d);
+        const count = dates[iso] || 0;
+        const level = count === 0 ? 0 : Math.ceil(clamp(count / 4, 0, 1) * 4);
+        ctx.fillStyle = (week > upTo) ? '#171B22' : level === 0 ? '#171B22' : mixColor('#4a0d0b', '#E10600', (level - 1) / 3);
+        roundRect(ctx, 10 + week * (cell + gap), 10 + d * (cell + gap), cell, cell, 3);
+        ctx.fill();
+      }
     }
-  }
+  };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) draw(weeks);
+  else { let k = 0; const step = () => { draw(k++); if (k <= weeks) requestAnimationFrame(step); }; step(); }
 }
 
 function mixColor(c1, c2, t) {
@@ -1910,14 +1898,14 @@ async function drawScoreLine() {
   const stepX = (w - pad * 2) / (days.length - 1);
 
   // gridlines
-  ctx.strokeStyle = '#22252b';
+  ctx.strokeStyle = '#20252d';
   ctx.lineWidth = 1;
   [0, 25, 50, 75, 100].forEach(v => {
     const y = h - pad - (v / maxY) * (h - pad * 2);
     ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
   });
 
-  ctx.strokeStyle = '#6d8bff';
+  ctx.strokeStyle = '#DCE3EA';
   ctx.lineWidth = 2;
   ctx.beginPath();
   scores.forEach((s, i) => {
@@ -1927,7 +1915,7 @@ async function drawScoreLine() {
   });
   ctx.stroke();
 
-  ctx.fillStyle = '#6d8bff';
+  ctx.fillStyle = '#DCE3EA';
   scores.forEach((s, i) => {
     const x = pad + i * stepX;
     const y = h - pad - (s / maxY) * (h - pad * 2);
@@ -1960,7 +1948,7 @@ async function drawRunBars() {
     const barH = (dist / maxDist) * (h - pad * 2);
     const x = pad + i * gap + (gap - barW) / 2;
     const y = h - pad - barH;
-    ctx.fillStyle = '#ff5d2e';
+    ctx.fillStyle = '#E10600';
     roundRect(ctx, x, y, barW, barH, 2);
     ctx.fill();
   });
@@ -2528,13 +2516,332 @@ function startClock() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 }
 
-async function maybeWelcome() {
+async function maybeWelcomeOld() {
   if ((await getMeta('user', null)) !== null) return;
   openModal(`<h3>Welcome to Ledger</h3>
-    <p class="muted" style="font-size:13px;margin:0 0 12px;">Your personal system for the things you choose to track. Start with your own activities and schedule — nothing is preselected, and you can shape Ledger whenever you need.</p>
+    <p class="muted" style="font-size:13px;margin:0 0 12px;">Your personal planner for study, training, habits and reflection. Everything is yours to change: weekly plan, schedule, habits, workouts, languages and reflection questions all live in Settings.</p>
     <div class="field"><label>What should I call you?</label><input id="wl-name" placeholder="Your name"></div>
     <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn primary" id="wl-go">Get started</button></div>`);
   document.getElementById('wl-go').addEventListener('click', async () => { await setMeta('user', document.getElementById('wl-name').value.trim()); closeModal(); if (currentPage === 'today') renderToday(); });
+}
+
+/* ============================================================
+   LEDGER — Activities, Focus, Goals, Insights, onboarding
+   ============================================================ */
+PAGES.splice(1, 0, { id: 'activities', label: 'Activities', dot: 'track' }, { id: 'focus', label: 'Focus', dot: 'ink' }, { id: 'goals', label: 'Goals', dot: 'violet' }, { id: 'insights', label: 'Insights', dot: 'ink' });
+(() => {
+  const tb = [['activities', 'Activities', '<path d="M8 6h12M8 12h12M8 18h12"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/>'], ['focus', 'Focus', '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 3h6"/>'], ['insights', 'Insights', '<path d="M5 20V10M12 20V4M19 20v-7"/>']];
+  [...document.querySelectorAll('#tabbar [data-tab-go]')].slice(1, 4).forEach((b, i) => { b.dataset.tabGo = tb[i][0]; b.lastChild.textContent = tb[i][1]; b.querySelector('svg').innerHTML = tb[i][2]; });
+})();
+
+const getActs = () => getMeta('acts', []);
+const getLog = iso => getMeta('alog-' + iso, {});
+async function setLog(iso, id, v) { const l = await getLog(iso); if (!v) delete l[id]; else l[id] = v; await setMeta('alog-' + iso, l); }
+const dowOf = iso => new Date(iso + 'T12:00:00').getDay();
+const isDue = (a, iso) => a.status === 'active' && (a.freq !== 'days' || (a.days || []).includes(dowOf(iso)));
+const isDone = (a, v) => a.type === 'check' ? !!v : a.target ? v >= a.target : v > 0;
+const unitOf = a => a.type === 'duration' ? 'min' : (a.unit || '');
+const freqLabel = a => a.freq === 'days' ? (a.days || []).map(d => DOW2[d]).join(' ') : a.freq === 'weekly' ? `${a.weekly || 1}x per week` : 'Every day';
+const DOW2 = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const refreshActs = () => currentPage === 'today' ? renderToday() : currentPage === 'activities' ? renderActivities() : 0;
+
+function actRow(a, v) {
+  const done = isDone(a, v), n = escapeHtml(a.name);
+  const cc = colOf(a), left = a.type === 'check' ? `<button class="tick ${done ? 'on' : ''}" style="border-color:${cc};${done ? 'background:' + cc + ';' : ''}" data-act-tick="${a.id}" aria-label="Toggle ${n}">${done ? '✓' : ''}</button>` : '';
+  const right = a.type === 'check' ? '' : `<span class="row" style="gap:6px;"><input class="act-in" type="number" min="0" inputmode="decimal" data-act-val="${a.id}" value="${v || ''}" placeholder="0" aria-label="${n} amount"><span class="faint" style="font-size:12px;">/ ${a.target || '–'} ${unitOf(a)}</span></span>`;
+  return `<div class="list-item ${done ? 'is-done' : ''}"><span class="todo-main">${left}<span class="todo-text">${a.icon ? a.icon + ' ' : ''}${n}${a.time ? ` <span class="faint mono" style="font-size:11px;">${a.time}</span>` : ''}</span></span>${right}</div>`;
+}
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-act-tick]'); if (!t) return;
+  const iso = todayISO(), l = await getLog(iso), rc = t.getBoundingClientRect(), on = !!l[t.dataset.actTick];
+  await setLog(iso, t.dataset.actTick, on ? 0 : 1);
+  if (!on) burst(rc.left + rc.width / 2, rc.top + rc.height / 2, colOf((await getActs()).find(x => x.id === t.dataset.actTick) || {}));
+  refreshActs();
+});
+document.addEventListener('change', async e => {
+  const i = e.target.closest('[data-act-val]'); if (!i) return;
+  await setLog(todayISO(), i.dataset.actVal, parseFloat(i.value) || 0); refreshActs();
+});
+
+async function actsTodayHtml(iso) {
+  const [all, l, events, courses] = await Promise.all([getActs(), getLog(iso), getMeta('events', []), dbGetAll('courses')]);
+  const acts = all.filter(a => isDue(a, iso)), dn = dayName(iso);
+  const tl = [...events.filter(e => e.day === dn && e.time).map(e => [e.time, e.title]), ...courses.filter(c => c.day === dn && c.status !== 'dropped' && /^\d\d:\d\d/.test(c.time || '')).map(c => [c.time.slice(0, 5), c.name]), ...acts.filter(a => a.time).map(a => [a.time, a.name])].sort((a, b) => a[0].localeCompare(b[0]));
+  const nowT = new Date().toTimeString().slice(0, 5), next = tl.find(x => x[0] >= nowT);
+  if (!acts.length && !tl.length) return '';
+  const done = acts.filter(a => isDone(a, l[a.id])).length;
+  return `<div data-acts-sec>${acts.length ? `<div class="section"><div class="section-head"><div class="section-title">Activities <span class="n">(${done}/${acts.length} · ${Math.round(done / acts.length * 100)}%)</span></div></div><div class="card">${acts.sort((a, b) => (a.time || '99').localeCompare(b.time || '99')).map(a => actRow(a, l[a.id])).join('')}</div></div>` : ''}
+  ${tl.length ? `<div class="section"><div class="section-head"><div class="section-title">Timeline</div></div><div class="card">${tl.map(x => `<div class="list-item" style="${x === next ? 'border-left:2px solid var(--track);padding-left:10px;' : ''}"><span class="mono faint">${x[0]}</span><span style="flex:1;margin-left:12px;${x === next ? 'font-weight:600;' : ''}">${escapeHtml(x[1])}</span>${x === next ? '<span class="pill track">next</span>' : ''}</div>`).join('')}</div></div>` : ''}</div>`;
+}
+
+async function syncActReminder(a) {
+  const r = await loadRem(); r.items = r.items.filter(i => i.id !== 'act-' + a.id);
+  if (a.remind && a.time && a.status === 'active') r.items.push({ id: 'act-' + a.id, label: a.name, time: a.time, days: a.freq === 'days' ? a.days : [0, 1, 2, 3, 4, 5, 6], on: true, body: 'Time for: ' + a.name });
+  await dbPut('meta', r); if (NATIVE) scheduleNative();
+}
+async function saveActs(list, changed) { await setMeta('acts', list); if (changed) await syncActReminder(changed); }
+
+const PALETTE = ['#E10600', '#FF8A00', '#F2C94C', '#2ECC71', '#1ABC9C', '#3D8BFF', '#9B5CF6', '#FF5C93', '#DCE3EA'];
+const ICONS = ['💪', '🏃', '📚', '💧', '🧘', '😴', '✍️', '🎯', '🧠', '🥗'];
+const colOf = a => a.color || '#E10600';
+let ACT_FILTER = 'All';
+async function allLogs() { const m = {}; (await dbGetAll('meta')).forEach(r => { if (r.key && r.key.startsWith('alog-')) m[r.key.slice(5)] = r.value || {}; }); return m; }
+function sched(a, iso) { return a.freq !== 'days' || (a.days || []).includes(dowOf(iso)); }
+function streaks(a, logs) {
+  let run = 0, best = 0, total = 0;
+  for (let i = 400; i >= 0; i--) {
+    const iso = todayISO(-i); if (!sched(a, iso)) continue;
+    if (isDone(a, (logs[iso] || {})[a.id])) { run++; total++; best = Math.max(best, run); } else if (i !== 0) run = 0;
+  }
+  return { cur: run, best, total };
+}
+function burst(x, y, color) {
+  if (navigator.vibrate) navigator.vibrate(12);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  for (let i = 0; i < 12; i++) {
+    const d = document.createElement('i'); d.className = 'bdot'; d.style.cssText = `left:${x}px;top:${y}px;background:${color}`; document.body.appendChild(d);
+    const ang = i / 12 * 6.283, dist = 24 + Math.random() * 22;
+    d.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(ang) * dist}px),calc(-50% + ${Math.sin(ang) * dist}px)) scale(0)`, opacity: 0 }], { duration: 560, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => d.remove();
+  }
+}
+function ringSvg(pct, size, color, label) {
+  const C = 276.46; return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="${pct}%"><circle cx="50" cy="50" r="44" fill="none" stroke="#20252d" stroke-width="9"/><circle class="ringc" cx="50" cy="50" r="44" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${pct / 100 * C} ${C}" transform="rotate(-90 50 50)"/><text x="50" y="${label ? 54 : 57}" text-anchor="middle" fill="#F5F7FA" font-size="${label ? 22 : 24}" font-weight="700" font-family="inherit">${pct}%</text>${label ? `<text x="50" y="70" text-anchor="middle" fill="#858D98" font-size="9">${label}</text>` : ''}</svg>`;
+}
+function gridHtml(a, logs, weeks) {
+  const todayRow = (dowOf(todayISO()) + 6) % 7, start = -todayRow - (weeks - 1) * 7; let h = '';
+  for (let i = 0; i < weeks * 7; i++) {
+    const off = start + i, iso = todayISO(off), v = (logs[iso] || {})[a.id], done = isDone(a, v), fut = off > 0;
+    h += `<button class="cell ${done ? 'on' : v ? 'part' : ''} ${fut ? 'fut' : ''} ${off === 0 ? 'tdy' : ''}" ${fut ? 'disabled' : ''} data-cell="${a.id}:${iso}" aria-label="${iso}"></button>`;
+  }
+  return `<div class="hgrid" style="--c:${colOf(a)}">${h}</div>`;
+}
+async function renderActivities() {
+  const c = document.getElementById('page-activities'), all = await getActs(), logs = await allLogs(), iso = todayISO(), l = logs[iso] || {};
+  const acts = all.filter(a => a.status !== 'archived'), arch = all.filter(a => a.status === 'archived');
+  const cats = ['All', ...new Set(acts.map(a => a.category || 'General'))]; if (!cats.includes(ACT_FILTER)) ACT_FILTER = 'All';
+  const shown = acts.filter(a => ACT_FILTER === 'All' || (a.category || 'General') === ACT_FILTER);
+  const due = acts.filter(a => isDue(a, iso)), dn = due.filter(a => isDone(a, l[a.id])).length, pct = due.length ? Math.round(dn / due.length * 100) : 0;
+  c.innerHTML = `<div class="page-head"><div><h1 class="page-title">Activities</h1><div class="page-sub">${due.length ? `${dn} of ${due.length} done today` : 'Nothing due today'}</div></div>${due.length ? ringSvg(pct, 74, '#E10600') : ''}</div>
+    ${cats.length > 2 ? `<div class="chips">${cats.map(x => `<button class="chip ${x === ACT_FILTER ? 'on' : ''}" data-filter="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join('')}</div>` : ''}
+    ${shown.length ? shown.map(a => {
+      const st = streaks(a, logs), v = l[a.id], cc = colOf(a), done = isDone(a, v), dueNow = isDue(a, iso);
+      const ctl = !dueNow ? `<span class="faint" style="font-size:11px;">${a.status === 'paused' ? 'paused' : 'rest day'}</span>` : a.type === 'check' ? `<button class="tick big ${done ? 'on' : ''}" style="border-color:${cc};${done ? 'background:' + cc + ';' : ''}" data-act-tick="${a.id}" aria-label="Toggle ${escapeHtml(a.name)}">${done ? '✓' : ''}</button>` : `<input class="act-in" type="number" min="0" inputmode="decimal" data-act-val="${a.id}" value="${v || ''}" placeholder="0" aria-label="${escapeHtml(a.name)} amount">`;
+      return `<div class="hcard" style="--c:${cc};${a.status === 'paused' ? 'opacity:.6;' : ''}"><div class="hhead" data-open="${a.id}"><span class="hico" style="background:${cc}22;color:${cc}">${a.icon || '●'}</span><div class="hname">${escapeHtml(a.name)}<div class="hsub">${freqLabel(a)}${a.type !== 'check' && a.target ? ` · ${a.target} ${unitOf(a)}` : ''}</div></div><span class="hstreak">${st.cur ? '🔥 ' + st.cur : '–'}</span>${ctl}</div>${gridHtml(a, logs, 18)}</div>`;
+    }).join('') : '<div class="empty">No activities yet. Tap + to create your first one.</div>'}
+    ${arch.length ? `<div class="section"><div class="section-head"><div class="section-title">Archived</div></div><div class="card">${arch.map(a => `<div class="list-item"><span class="faint">${escapeHtml(a.name)}</span><span class="row" style="gap:4px;"><button class="btn ghost small" data-ar="${a.id}">Restore</button><button class="btn ghost small" data-ad="${a.id}">Delete</button></span></div>`).join('')}</div></div>` : ''}`;
+  c.querySelectorAll('.hgrid').forEach(g => { g.scrollLeft = g.scrollWidth; });
+  c.onclick = async e => {
+    if (e.target.closest('[data-act-tick],[data-act-val],[data-cell]')) return;
+    const f = e.target.closest('[data-filter]'); if (f) { ACT_FILTER = f.dataset.filter; return renderActivities(); }
+    const o = e.target.closest('[data-open]'); if (o) return openActDetail(o.dataset.open);
+    const b = e.target.closest('[data-ar],[data-ad]'); if (!b) return;
+    const id = b.dataset.ar || b.dataset.ad, a = all.find(x => x.id === id);
+    if (b.dataset.ad) { if (!confirm('Delete this activity? Its history stays in your records.')) return; await saveActs(all.filter(x => x.id !== id), Object.assign({}, a, { status: 'archived' })); }
+    else { a.status = 'active'; await saveActs(all, a); }
+    renderActivities();
+  };
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-cell]'); if (!b || b.disabled) return;
+  const [id, iso] = b.dataset.cell.split(':'), acts = await getActs(), a = acts.find(x => x.id === id); if (!a) return;
+  const l = await getLog(iso), on = !!l[id], r = b.getBoundingClientRect();
+  await setLog(iso, id, on ? 0 : (a.type === 'check' ? 1 : (a.target || 1)));
+  if (!on) burst(r.left + r.width / 2, r.top + r.height / 2, colOf(a));
+  if (document.getElementById('ad-sheet')) openActDetail(id); else refreshActs();
+});
+async function openActDetail(id) {
+  const acts = await getActs(), a = acts.find(x => x.id === id); if (!a) return;
+  const logs = await allLogs(), st = streaks(a, logs), cc = colOf(a);
+  let due = 0, dn = 0; for (let i = 0; i < 30; i++) { const iso = todayISO(-i); if (sched(a, iso)) { due++; if (isDone(a, (logs[iso] || {})[id])) dn++; } }
+  const wd = [0, 0, 0, 0, 0, 0, 0], wdn = [0, 0, 0, 0, 0, 0, 0];
+  for (let i = 0; i < 90; i++) { const iso = todayISO(-i), d = (dowOf(iso) + 6) % 7; if (sched(a, iso)) { wd[d]++; if (isDone(a, (logs[iso] || {})[id])) wdn[d]++; } }
+  const mo = []; for (let m = 5; m >= 0; m--) { const dt = new Date(); dt.setDate(1); dt.setMonth(dt.getMonth() - m); const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0'); mo.push([dt.toLocaleString([], { month: 'short' }), Object.keys(logs).filter(k => k.startsWith(key) && isDone(a, logs[k][id])).length]); }
+  const mx = Math.max(1, ...mo.map(x => x[1]));
+  openModal(`<div id="ad-sheet" style="--c:${cc}"><div class="row" style="gap:12px;margin-bottom:14px;"><span class="hico big" style="background:${cc}22;color:${cc}">${a.icon || '●'}</span><div><h3 style="margin:0;">${escapeHtml(a.name)}</h3><div class="faint" style="font-size:12px;">${escapeHtml(a.category || 'General')} · ${freqLabel(a)}</div></div></div>
+    <div class="grid grid-3" style="grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;"><div class="mini"><b>${st.cur}</b><span>streak</span></div><div class="mini"><b>${st.best}</b><span>best</span></div><div class="mini"><b>${st.total}</b><span>total</span></div><div class="mini"><b>${due ? Math.round(dn / due * 100) : 0}%</b><span>30 days</span></div></div>
+    <div class="faint" style="font-size:11px;margin-bottom:6px;">Tap any day to log or undo</div>${gridHtml(a, logs, 26)}
+    <div class="section-title" style="margin:16px 0 8px;">Best days</div><div class="wdbars">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((n, i) => `<div><div class="wdb"><i style="height:${wd[i] ? Math.max(4, wdn[i] / wd[i] * 100) : 4}%"></i></div><span>${n}</span></div>`).join('')}</div>
+    <div class="section-title" style="margin:16px 0 8px;">Completions per month</div><div class="wdbars">${mo.map(x => `<div><div class="wdb"><i style="height:${Math.max(4, x[1] / mx * 100)}%"></i></div><span>${x[0]}</span></div>`).join('')}</div>
+    <div class="row" style="gap:8px;margin-top:18px;flex-wrap:wrap;"><button class="btn" id="ad-edit">Edit</button><button class="btn" id="ad-pause">${a.status === 'paused' ? 'Resume' : 'Pause'}</button><button class="btn" id="ad-arch">Archive</button><button class="btn ghost" onclick="closeModal()" style="margin-left:auto;">Close</button></div></div>`);
+  document.querySelector('#ad-sheet .hgrid').scrollLeft = 9999;
+  document.getElementById('ad-edit').onclick = () => openActModal(a);
+  document.getElementById('ad-pause').onclick = async () => { a.status = a.status === 'paused' ? 'active' : 'paused'; await saveActs(acts, a); closeModal(); refreshActs(); };
+  document.getElementById('ad-arch').onclick = async () => { a.status = 'archived'; await saveActs(acts, a); closeModal(); refreshActs(); };
+}
+
+/* floating add button + quick add */
+const fab = document.createElement('button'); fab.id = 'fab'; fab.textContent = '+'; fab.setAttribute('aria-label', 'Add'); document.body.appendChild(fab);
+function updFab() { fab.style.display = ['today', 'activities'].includes(currentPage) ? '' : 'none'; }
+fab.onclick = () => {
+  if (currentPage === 'activities') return openActModal();
+  openModal(`<h3>Quick add</h3><div class="row" style="gap:8px;"><input id="qa-t" placeholder="Task for today…" style="flex:1;"><button class="btn primary" id="qa-add">Add</button></div><button class="btn" id="qa-act" style="width:100%;margin-top:12px;">New activity</button>`);
+  document.getElementById('qa-add').onclick = async () => { const t = document.getElementById('qa-t').value.trim(); if (!t) return; const list = await getMeta('tasks', []); list.push({ id: uid(), text: t, date: todayISO(), done: false }); await setMeta('tasks', list); closeModal(); refreshActs(); };
+  document.getElementById('qa-act').onclick = () => { closeModal(); openActModal(); };
+};
+const _goTo = goTo;
+goTo = async function (id) { document.body.dataset.nav = '1'; clearTimeout(window.__nt); window.__nt = setTimeout(() => delete document.body.dataset.nav, 800); const r = await _goTo.apply(this, arguments); updFab(); return r; };
+
+function openActModal(a) {
+  const cur = a || { type: 'check', freq: 'daily', days: [1, 2, 3, 4, 5], status: 'active' };
+  getActs().then(all => {
+    const cats = [...new Set(['Health', 'Fitness', 'Study', 'Mind', 'Work', ...all.map(x => x.category).filter(Boolean)])];
+    openModal(`<h3>${a ? 'Edit' : 'New'} activity</h3>
+      <div class="field"><label>Name</label><input id="ac-name" value="${escapeHtml(cur.name || '')}" placeholder="e.g. Read, Gym, Drink water"></div>
+      <div class="field"><label>Description (optional)</label><input id="ac-desc" value="${escapeHtml(cur.desc || '')}"></div>
+      <div class="field"><label>Icon and color</label><div class="row" style="gap:6px;flex-wrap:wrap;">${ICONS.map(i => `<button type="button" class="btn small ghost" data-ico="${i}">${i}</button>`).join('')}<input id="ac-icon" maxlength="2" value="${escapeHtml(cur.icon || '')}" style="width:56px;text-align:center;" placeholder="🙂"></div><div class="row" style="gap:10px;margin-top:10px;">${PALETTE.map(c => `<button type="button" class="swatch ${(cur.color || '#E10600') === c ? 'sel' : ''}" data-col="${c}" style="background:${c}" aria-label="Color ${c}"></button>`).join('')}</div><input type="hidden" id="ac-col" value="${cur.color || '#E10600'}"></div>
+      <div class="field"><label>Category (pick or type your own)</label><input id="ac-cat" list="ac-cats" value="${escapeHtml(cur.category || '')}"><datalist id="ac-cats">${cats.map(x => `<option value="${escapeHtml(x)}">`).join('')}</datalist></div>
+      <div class="row"><div class="field" style="flex:1;"><label>Tracking</label><select id="ac-type"><option value="check">Checkbox</option><option value="number">Number</option><option value="duration">Duration (min)</option></select></div>
+      <div class="field" style="flex:1;"><label>Repeat</label><select id="ac-freq"><option value="daily">Every day</option><option value="days">Selected days</option><option value="weekly">Weekly target</option></select></div></div>
+      <div class="field" id="ac-days-f"><label>Days</label><div class="row" style="gap:10px;flex-wrap:wrap;">${DOW2.map((d, i) => `<label style="display:flex;gap:4px;align-items:center;"><input type="checkbox" data-d="${i}" ${(cur.days || []).includes(i) ? 'checked' : ''}>${d}</label>`).join('')}</div></div>
+      <div class="field" id="ac-weekly-f"><label>Times per week</label><input id="ac-weekly" type="number" min="1" max="7" value="${cur.weekly || 3}"></div>
+      <div class="row"><div class="field" style="flex:1;" id="ac-target-f"><label>Daily target</label><input id="ac-target" type="number" min="0" value="${cur.target || ''}"></div>
+      <div class="field" style="flex:1;" id="ac-unit-f"><label>Unit</label><input id="ac-unit" value="${escapeHtml(cur.unit || '')}" placeholder="glasses, pages…"></div></div>
+      <div class="row"><div class="field" style="flex:1;"><label>Preferred time</label><input id="ac-time" type="time" value="${cur.time || ''}"></div>
+      <div class="field" style="flex:1;"><label>Reminder</label><select id="ac-rem"><option value="0">Off</option><option value="1" ${cur.remind ? 'selected' : ''}>At that time</option></select></div></div>
+      <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" id="ac-save">Save</button></div>`);
+    const q = id => document.getElementById(id);
+    q('ac-type').value = cur.type; q('ac-freq').value = cur.freq;
+    const sync = () => { q('ac-days-f').style.display = q('ac-freq').value === 'days' ? '' : 'none'; q('ac-weekly-f').style.display = q('ac-freq').value === 'weekly' ? '' : 'none'; q('ac-target-f').style.display = q('ac-type').value === 'check' ? 'none' : ''; q('ac-unit-f').style.display = q('ac-type').value === 'number' ? '' : 'none'; };
+    q('ac-type').onchange = q('ac-freq').onchange = sync; sync();
+    document.querySelectorAll('[data-ico]').forEach(b => b.onclick = () => { q('ac-icon').value = b.dataset.ico; });
+    document.querySelectorAll('[data-col]').forEach(b => b.onclick = () => { q('ac-col').value = b.dataset.col; document.querySelectorAll('[data-col]').forEach(x => x.classList.toggle('sel', x === b)); });
+    q('ac-save').onclick = async () => {
+      const name = q('ac-name').value.trim(); if (!name) { toast('Give it a name.', true); return; }
+      const days = [...document.querySelectorAll('[data-d]')].filter(x => x.checked).map(x => +x.dataset.d);
+      const obj = Object.assign({ id: uid(), status: 'active' }, cur, { name, desc: q('ac-desc').value, category: q('ac-cat').value.trim() || 'General', type: q('ac-type').value, freq: q('ac-freq').value, days: days.length ? days : [1, 2, 3, 4, 5], weekly: +q('ac-weekly').value || 1, target: parseFloat(q('ac-target').value) || 0, unit: q('ac-unit').value, time: q('ac-time').value, remind: q('ac-rem').value === '1', color: q('ac-col').value, icon: q('ac-icon').value.trim() });
+      const list = a ? all.map(x => x.id === a.id ? obj : x) : [...all, obj];
+      await saveActs(list, obj); closeModal(); toast('Saved.'); refreshActs();
+    };
+  });
+}
+
+/* ---- Focus tools ---- */
+const FX = { mode: 'timer', min: 25, endAt: 0, running: false, left: 25 * 60, swAcc: 0, swStart: 0, swRun: false, actId: '' };
+const mmss = sec => { sec = Math.max(0, Math.round(sec)); return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0'); };
+async function logFocus(min) {
+  const iso = todayISO(); await setMeta('focus-' + iso, ((await getMeta('focus-' + iso, 0)) || 0) + min);
+  if (FX.actId) { const l = await getLog(iso); await setLog(iso, FX.actId, (l[FX.actId] || 0) + min); }
+}
+function fxSecs() { return FX.mode === 'timer' ? (FX.running ? (FX.endAt - Date.now()) / 1000 : FX.left) : (FX.swAcc + (FX.swRun ? Date.now() - FX.swStart : 0)) / 1000; }
+setInterval(async () => {
+  if (FX.running && FX.endAt - Date.now() <= 0) { FX.running = false; FX.left = FX.min * 60; await logFocus(FX.min); fireNote('Focus complete', `${FX.min} minutes logged. Nice work.`, 'focus'); if (navigator.vibrate) navigator.vibrate([200, 100, 200]); toast('Focus session complete.'); if (currentPage === 'focus') renderFocus(); }
+  const d = document.getElementById('fx-disp'); if (d) d.textContent = mmss(fxSecs());
+}, 500);
+async function renderFocus() {
+  const c = document.getElementById('page-focus'), acts = (await getActs()).filter(a => a.status === 'active' && a.type === 'duration'), today = (await getMeta('focus-' + todayISO(), 0)) || 0;
+  const t = FX.mode === 'timer', run = t ? FX.running : FX.swRun;
+  c.innerHTML = `<div class="page-head"><div><h1 class="page-title">Focus</h1><div class="page-sub">${today} min focused today</div></div></div>
+    <div class="row" style="gap:8px;margin-bottom:14px;"><button class="btn ${t ? 'primary' : ''}" data-fm="timer">Focus timer</button><button class="btn ${t ? '' : 'primary'}" data-fm="sw">Stopwatch</button></div>
+    <div class="card" style="text-align:center;padding:28px 16px;"><div class="big-clock" id="fx-disp" style="font-size:64px;margin:0 0 18px;">${mmss(fxSecs())}</div>
+      ${t && !run ? `<div class="row" style="justify-content:center;gap:8px;margin-bottom:16px;">${[15, 25, 45, 60].map(m => `<button class="btn small ${FX.min === m ? 'primary' : ''}" data-fmin="${m}">${m}</button>`).join('')}<input id="fx-custom" type="number" min="1" max="240" placeholder="min" style="width:70px;"></div>` : ''}
+      ${acts.length ? `<div class="field" style="max-width:260px;margin:0 auto 16px;"><label>Count toward activity</label><select id="fx-act"><option value="">None</option>${acts.map(a => `<option value="${a.id}" ${FX.actId === a.id ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('')}</select></div>` : ''}
+      <div class="row" style="justify-content:center;gap:8px;"><button class="btn primary" id="fx-go">${run ? 'Pause' : 'Start'}</button><button class="btn" id="fx-reset">Reset</button>${!t ? '<button class="btn" id="fx-save">Save session</button>' : ''}</div></div>`;
+  c.onclick = async e => {
+    const b = e.target.closest('[data-fm],[data-fmin],#fx-go,#fx-reset,#fx-save'); if (!b) return;
+    if (b.dataset.fm) FX.mode = b.dataset.fm;
+    if (b.dataset.fmin) { FX.min = +b.dataset.fmin; FX.left = FX.min * 60; }
+    if (b.id === 'fx-go') { if (t) { if (FX.running) { FX.left = (FX.endAt - Date.now()) / 1000; FX.running = false; } else { const cu = document.getElementById('fx-custom'); if (cu && +cu.value) { FX.min = +cu.value; FX.left = FX.min * 60; } FX.endAt = Date.now() + FX.left * 1000; FX.running = true; } } else { if (FX.swRun) { FX.swAcc += Date.now() - FX.swStart; FX.swRun = false; } else { FX.swStart = Date.now(); FX.swRun = true; } } }
+    if (b.id === 'fx-reset') { FX.running = false; FX.left = FX.min * 60; FX.swAcc = 0; FX.swRun = false; }
+    if (b.id === 'fx-save') { const m = Math.round(fxSecs() / 60); if (m < 1) { toast('Under a minute. Nothing to save.', true); return; } await logFocus(m); FX.swAcc = 0; FX.swRun = false; toast(`${m} min saved.`); }
+    renderFocus();
+  };
+  const sel = document.getElementById('fx-act'); if (sel) sel.onchange = () => { FX.actId = sel.value; };
+}
+
+/* ---- Goals ---- */
+async function renderGoals() {
+  const c = document.getElementById('page-goals'), goals = await getMeta('goals', []), iso = todayISO();
+  const prog = g => g.ms && g.ms.length ? Math.round(g.ms.filter(m => m.done).length / g.ms.length * 100) : (g.manual || 0);
+  c.innerHTML = `<div class="page-head"><div><h1 class="page-title">Goals</h1><div class="page-sub">Long-term targets with milestones.</div></div><button class="btn primary" id="goal-new">+ Goal</button></div>
+    ${goals.length ? goals.map((g, gi) => { const p = prog(g); return `<div class="card" style="margin-bottom:12px;"><div class="row between"><strong>${escapeHtml(g.title)}</strong><span class="pill ${p >= 100 ? 'signal' : 'track'}">${p >= 100 ? 'complete' : p + '%'}</span></div>
+      <div class="bar-track" style="margin:10px 0 6px;"><div class="bar-fill" style="width:${p}%;background:var(--track);"></div></div>
+      <div class="faint" style="font-size:12px;">${g.target ? `Target ${shortDate(g.target)} · ${daysBetween(iso, g.target) >= 0 ? daysBetween(iso, g.target) + ' days left' : 'past target date'}` : 'No target date'}</div>
+      ${(g.ms || []).map((m, mi) => `<div class="list-item ${m.done ? 'is-done' : ''}"><span class="todo-main"><button class="tick ${m.done ? 'on' : ''}" data-gm="${gi}:${mi}" aria-label="Toggle milestone">${m.done ? '✓' : ''}</button><span class="todo-text">${escapeHtml(m.t)}</span></span></div>`).join('')}
+      ${(g.ms || []).length ? '' : `<input type="range" min="0" max="100" value="${g.manual || 0}" data-gp="${gi}" style="width:100%;margin-top:10px;" aria-label="Progress">`}
+      <div class="row" style="gap:6px;margin-top:10px;"><button class="btn ghost small" data-ge="${gi}">Edit</button><button class="btn ghost small" data-gd="${gi}">Delete</button></div></div>`; }).join('') : '<div class="empty">Add a goal, then break it into milestones.</div>'}`;
+  document.getElementById('goal-new').onclick = () => goalModal();
+  c.onclick = async e => {
+    const b = e.target.closest('[data-gm],[data-ge],[data-gd]'); if (!b) return;
+    if (b.dataset.gm) { const [i, j] = b.dataset.gm.split(':').map(Number); goals[i].ms[j].done = !goals[i].ms[j].done; await setMeta('goals', goals); renderGoals(); }
+    else if (b.dataset.ge) goalModal(+b.dataset.ge);
+    else if (confirm('Delete this goal?')) { goals.splice(+b.dataset.gd, 1); await setMeta('goals', goals); renderGoals(); }
+  };
+  c.querySelectorAll('[data-gp]').forEach(r => r.onchange = async () => { goals[+r.dataset.gp].manual = +r.value; await setMeta('goals', goals); renderGoals(); });
+}
+async function goalModal(idx) {
+  const goals = await getMeta('goals', []), g = idx != null ? goals[idx] : { title: '', target: '', ms: [] };
+  openModal(`<h3>${idx != null ? 'Edit' : 'New'} goal</h3><div class="field"><label>Goal</label><input id="g-t" value="${escapeHtml(g.title)}" placeholder="e.g. Run a 10K"></div>
+    <div class="field"><label>Target date</label><input id="g-d" type="date" value="${g.target || ''}"></div>
+    <div class="field"><label>Milestones (one per line)</label><textarea id="g-m">${escapeHtml((g.ms || []).map(m => m.t).join('\n'))}</textarea></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px;"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" id="g-save">Save</button></div>`);
+  document.getElementById('g-save').onclick = async () => {
+    const title = document.getElementById('g-t').value.trim(); if (!title) { toast('Name your goal.', true); return; }
+    const old = g.ms || [], ms = document.getElementById('g-m').value.split('\n').map(x => x.trim()).filter(Boolean).map(t => ({ t, done: !!(old.find(o => o.t === t) || {}).done }));
+    const ng = Object.assign({}, g, { title, target: document.getElementById('g-d').value, ms });
+    if (idx != null) goals[idx] = ng; else goals.push(ng);
+    await setMeta('goals', goals); closeModal(); renderGoals();
+  };
+}
+
+/* ---- Insights: real data only ---- */
+let INS_DAYS = 7;
+async function renderInsights() {
+  const c = document.getElementById('page-insights'), acts = await getActs(), days = [];
+  for (let i = INS_DAYS - 1; i >= 0; i--) { const iso = todayISO(-i), l = await getLog(iso), due = acts.filter(a => isDue(a, iso)), done = due.filter(a => isDone(a, l[a.id])); days.push({ iso, due: due.length, done: done.length, focus: (await getMeta('focus-' + iso, 0)) || 0, l }); }
+  const sd = days.reduce((a, d) => a + d.done, 0), su = days.reduce((a, d) => a + d.due, 0), active = days.filter(d => d.done || d.focus).length, fm = days.reduce((a, d) => a + d.focus, 0), maxF = Math.max(1, ...days.map(d => d.focus));
+  const per = acts.filter(a => a.status !== 'archived').map(a => { let du = 0, dn = 0, mins = 0; days.forEach(d => { if (isDue(a, d.iso)) { du++; if (isDone(a, d.l[a.id])) dn++; } if (a.type === 'duration') mins += d.l[a.id] || 0; }); return { a, du, dn, mins }; });
+  c.innerHTML = `<div class="page-head"><div><h1 class="page-title">Insights</h1><div class="page-sub">Calculated only from what you logged.</div></div>
+    <div class="row" style="gap:6px;"><button class="btn small ${INS_DAYS === 7 ? 'primary' : ''}" data-ip="7">Week</button><button class="btn small ${INS_DAYS === 30 ? 'primary' : ''}" data-ip="30">Month</button></div></div>
+    <div class="grid grid-3"><div class="stat"><div class="stat-num">${su ? Math.round(sd / su * 100) : 0}%</div><div class="stat-label">activities completed</div></div><div class="stat"><div class="stat-num">${active}/${INS_DAYS}</div><div class="stat-label">active days</div></div><div class="stat"><div class="stat-num">${fm}</div><div class="stat-label">focus minutes</div></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">Daily completion</div></div><div class="card"><div style="display:flex;align-items:flex-end;gap:${INS_DAYS > 7 ? 2 : 8}px;height:110px;">${days.map(d => `<div title="${d.iso}: ${d.done}/${d.due}" style="flex:1;background:${d.due ? 'var(--track)' : 'var(--line)'};height:${d.due ? Math.max(4, d.done / d.due * 100) : 4}%;border-radius:3px 3px 0 0;"></div>`).join('')}</div></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">Focus minutes</div></div><div class="card"><div style="display:flex;align-items:flex-end;gap:${INS_DAYS > 7 ? 2 : 8}px;height:80px;">${days.map(d => `<div title="${d.iso}: ${d.focus} min" style="flex:1;background:var(--ink);height:${Math.max(3, d.focus / maxF * 100)}%;border-radius:3px 3px 0 0;"></div>`).join('')}</div></div></div>
+    <div class="section"><div class="section-head"><div class="section-title">By activity</div></div>${per.length ? `<div class="card">${per.map(x => `<div style="margin-bottom:12px;"><div class="row between"><span>${escapeHtml(x.a.name)}</span><span class="faint mono" style="font-size:12px;">${x.dn}/${x.du} days${x.mins ? ' · ' + x.mins + ' min' : ''}</span></div><div class="bar-track" style="margin-top:6px;"><div class="bar-fill" style="width:${x.du ? x.dn / x.du * 100 : 0}%;background:var(--track);"></div></div></div>`).join('')}</div>` : '<div class="empty">Add activities to see statistics.</div>'}</div>`;
+  const pcts = days.map(d => d.due ? Math.round(d.done / d.due * 100) : null), vals = pcts.filter(x => x !== null);
+  const pts = days.map((d, i) => pcts[i] === null ? null : [i / Math.max(1, days.length - 1) * 300, 100 - pcts[i]]).filter(Boolean);
+  const wk = [[], [], [], [], [], [], []]; days.forEach((d, i) => { if (pcts[i] !== null) wk[(dowOf(d.iso) + 6) % 7].push(pcts[i]); });
+  const overall = su ? Math.round(sd / su * 100) : 0;
+  c.querySelector('.grid-3').insertAdjacentHTML('beforebegin', `<div class="card" style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">${ringSvg(overall, 112, '#E10600', 'completed')}<div style="flex:1;"><div class="faint" style="font-size:12px;">Trend</div>${pts.length > 1 ? `<svg viewBox="0 0 300 100" preserveAspectRatio="none" style="width:100%;height:70px;"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E10600" stop-opacity=".35"/><stop offset="1" stop-color="#E10600" stop-opacity="0"/></linearGradient></defs><path d="M${pts.map(q => q.join(',')).join(' L')} L300,100 L0,100Z" fill="url(#lg)"/><path class="draw" pathLength="1000" d="M${pts.map(q => q.join(',')).join(' L')}" fill="none" stroke="#E10600" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>` : '<div class="faint" style="font-size:12px;">Log a few days to see your trend.</div>'}</div></div>
+    <div class="card" style="margin-bottom:12px;"><div class="section-title" style="margin-bottom:10px;">Best weekdays</div><div class="wdbars">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((n, i) => { const v = wk[i].length ? Math.round(wk[i].reduce((a, b) => a + b, 0) / wk[i].length) : 0; return `<div><div class="wdb"><i style="height:${Math.max(4, v)}%"></i></div><span>${n}</span></div>`; }).join('')}</div></div>`);
+  c.onclick = e => { const b = e.target.closest('[data-ip]'); if (b) { INS_DAYS = +b.dataset.ip; renderInsights(); } };
+}
+
+PAGE_RENDERERS.activities = renderActivities; PAGE_RENDERERS.focus = renderFocus; PAGE_RENDERERS.goals = renderGoals; PAGE_RENDERERS.insights = renderInsights;
+
+/* heatmap: tap a day to inspect */
+document.addEventListener('click', async e => {
+  if (e.target.id !== 'heatmap-canvas') return;
+  const r = e.target.getBoundingClientRect(), weeks = 12, cell = Math.min(14, (r.width - 20) / weeks), g = 3;
+  const wk = Math.floor((e.clientX - r.left - 10) / (cell + g)), d = Math.floor((e.clientY - r.top - 10) / (cell + g));
+  if (wk < 0 || wk >= weeks || d < 0 || d > 6) return;
+  const iso = todayISO(-(weeks * 7 - 1) + wk * 7 + d), l = await getLog(iso), acts = await getActs(), f = (await getMeta('focus-' + iso, 0)) || 0;
+  const rows = acts.filter(a => l[a.id]).map(a => `<div class="list-item"><span>${escapeHtml(a.name)}</span><span class="faint mono">${a.type === 'check' ? 'done' : l[a.id] + ' ' + unitOf(a)}</span></div>`).join('');
+  openModal(`<h3>${dayName(iso)} · ${shortDate(iso)}</h3>${rows || '<p class="muted" style="font-size:13px;">No activities logged.</p>'}${f ? `<div class="list-item"><span>Focus</span><span class="faint mono">${f} min</span></div>` : ''}<div class="row" style="justify-content:flex-end;margin-top:10px;"><button class="btn" onclick="closeModal()">Close</button></div>`);
+});
+
+/* ---- onboarding ---- */
+const AREAS = { Habits: [['Drink water', 'number', 8, 'glasses'], ['Read', 'duration', 20], ['Meditate', 'duration', 10]], Workouts: [['Workout', 'check'], ['Run', 'duration', 30]], Studying: [['Study block', 'duration', 60], ['Language practice', 'duration', 20]], Sleep: [['Sleep', 'number', 7, 'hours']], Goals: [], Tasks: [] };
+async function maybeWelcome() {
+  if ((await getMeta('user', null)) !== null) return;
+  let step = 0, name = '', areas = [], picks = null;
+  const finish = async (skip) => {
+    await setMeta('user', skip ? '' : name);
+    if (picks) {
+      const list = picks.map(([n, type, target, unit], i) => ({ id: uid() + i, name: n, category: areas.find(a => AREAS[a].some(x => x[0] === n)) || 'General', type, freq: 'daily', days: [1, 2, 3, 4, 5], target: target || 0, unit: unit || '', status: 'active', time: '', remind: false }));
+      const extra = (document.getElementById('ob-own') || {}).value; if (extra && extra.trim()) list.push({ id: uid(), name: extra.trim(), category: 'General', type: 'check', freq: 'daily', days: [1, 2, 3, 4, 5], target: 0, unit: '', status: 'active', time: '', remind: false });
+      if (list.length) { await setMeta('acts', list); const hl = await dbGetAll('habitLogs'); if (!hl.length) for (const h of await dbGetAll('habits')) { h.archived = true; await dbPut('habits', h); } }
+    }
+    closeModal(); goTo(areas.includes('Goals') ? 'goals' : 'today'); if (currentPage === 'today') renderToday();
+  };
+  const draw = () => {
+    if (step === 0) openModal(`<h3>Welcome to Ledger</h3><p class="muted" style="font-size:13px;margin:0 0 12px;">Your life. Your system. Build your own routines and track only what matters to you.</p><div class="field"><label>What should I call you?</label><input id="ob-name" value="${escapeHtml(name)}" placeholder="Your name"></div><div class="row between" style="margin-top:8px;"><button class="btn ghost" id="ob-skip">Skip setup</button><button class="btn primary" id="ob-next">Next</button></div>`);
+    if (step === 1) openModal(`<h3>What do you want to organize?</h3><p class="muted" style="font-size:13px;margin:0 0 10px;">Pick any. You can change everything later.</p><div class="row" style="gap:8px;flex-wrap:wrap;">${Object.keys(AREAS).map(a => `<button class="btn ${areas.includes(a) ? 'primary' : ''}" data-area="${a}">${a}</button>`).join('')}</div><div class="row between" style="margin-top:16px;"><button class="btn ghost" id="ob-skip">Skip</button><button class="btn primary" id="ob-next">Next</button></div>`);
+    if (step === 2) { const sug = areas.flatMap(a => AREAS[a]); openModal(`<h3>Create your first activities</h3>${sug.length ? `<p class="muted" style="font-size:13px;margin:0 0 6px;">Untick what you don't want.</p>${sug.map((x, i) => `<label class="list-item" style="gap:10px;justify-content:flex-start;"><input type="checkbox" data-sug="${i}" checked> ${x[0]}${x[2] ? ` <span class="faint">(${x[2]} ${x[1] === 'duration' ? 'min' : x[3] || ''})</span>` : ''}</label>`).join('')}` : '<p class="muted" style="font-size:13px;">Nothing to suggest. Add your own below.</p>'}<div class="field" style="margin-top:10px;"><label>Add your own (optional)</label><input id="ob-own" placeholder="Anything you want to track"></div><div class="row between" style="margin-top:8px;"><button class="btn ghost" id="ob-skip">Skip</button><button class="btn primary" id="ob-next">Finish</button></div>`); window.__sug = sug; }
+    const n = document.getElementById('ob-next'), sk = document.getElementById('ob-skip');
+    sk.onclick = () => finish(step === 0);
+    n.onclick = () => { if (step === 0) name = document.getElementById('ob-name').value.trim(); if (step === 2) { picks = window.__sug.filter((x, i) => document.querySelector(`[data-sug="${i}"]`).checked); return finish(false); } step++; draw(); };
+    document.querySelectorAll('[data-area]').forEach(b => b.onclick = () => { const a = b.dataset.area; areas = areas.includes(a) ? areas.filter(x => x !== a) : [...areas, a]; draw(); });
+  };
+  draw();
 }
 
 boot().then(() => { startPhoneLayer(); startClock(); maybeWelcome(); });
